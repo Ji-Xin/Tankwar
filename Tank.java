@@ -87,28 +87,31 @@ public class Tank{
 				bul = new Bullet(
 					x-Tank.size/2,
 					y+Tank.size/2-Tank.gun_size/2,
-					dir);
+					dir, mine);
 				break;
 			case 1:
 				bul = new Bullet(
 					x+Tank.size/2-Tank.gun_size/2,
 					y-Tank.size/2,
-					dir);
+					dir, mine);
 				break;
 			case 2:
 				bul = new Bullet(
 					x+Tank.size*3/2,
 					y+Tank.size/2-Tank.gun_size/2,
-					dir);
+					dir, mine);
 				break;
 			case 3:
 				bul = new Bullet(
 					x+Tank.size/2-Tank.gun_size/2,
 					y+Tank.size*3/2,
-					dir);
+					dir, mine);
 				break;
 		}
-		parent.bullets.add(bul);
+		if (mine)
+			parent.myBullets.add(bul);
+		else
+			parent.enemyBullets.add(bul);
 	}
 
 	public void released(KeyEvent e){

@@ -17,8 +17,8 @@ public class EnemyTank extends Tank{
 		public void run(){
 			while (true)
 			{
-				try{Thread.sleep(2000);}catch(Exception e){}
 				fire();
+				try{Thread.sleep(2000);}catch(Exception e){}
 			}
 		}
 	}

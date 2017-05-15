@@ -11,7 +11,8 @@ public class Game extends JPanel{
 	Color bground;
 	Tank myTank;
 	Motion mo;
-	ArrayList<Bullet> bullets;
+	ArrayList<Bullet> myBullets;
+	ArrayList<Bullet> enemyBullets;
 	ArrayList<EnemyTank> enemies;
 
 
@@ -29,7 +30,8 @@ public class Game extends JPanel{
 
 		frame.addKeyListener(new Listener());
 
-		bullets = new ArrayList<Bullet>();
+		myBullets = new ArrayList<Bullet>();
+		enemyBullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<EnemyTank>();
 
 		enemies.add(new EnemyTank(500, 200, 0, this));
@@ -55,9 +57,15 @@ public class Game extends JPanel{
 			e.draw(g);
 		}
 
-		for (int i=0; i<bullets.size(); i++)
+		for (int i=0; i<myBullets.size(); i++)
 		{
-			Bullet b = bullets.get(i);
+			Bullet b = myBullets.get(i);
+			b.draw(g);
+		}
+
+		for (int i=0; i<enemyBullets.size(); i++)
+		{
+			Bullet b = enemyBullets.get(i);
 			b.draw(g);
 		}
 	}
@@ -90,4 +98,10 @@ public class Game extends JPanel{
 			myTank.released(e);
 		}
 	}
+
+	/*private class Hit extends Thread{
+		public void run(){
+			for (int i=0; i<)
+		}
+	}*/
 }

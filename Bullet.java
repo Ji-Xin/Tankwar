@@ -10,15 +10,20 @@ public class Bullet{
 	int x,y;
 	static int speed=5;
 	int dir;
+	boolean mine;
 
-	public Bullet(int xx, int yy, int d){
+	public Bullet(int xx, int yy, int d, boolean m){
 		x = xx;
 		y = yy;
 		dir = d;
+		mine = m;
 	}
 
 	public void draw(Graphics g){
-		g.setColor(Color.black);
+		if (mine)
+			g.setColor(Color.black);
+		else
+			g.setColor(Color.magenta);
 		g.fillRect(x, y, Tank.gun_size, Tank.gun_size);
 		this.move();
 	}
