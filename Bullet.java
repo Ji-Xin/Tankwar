@@ -45,4 +45,10 @@ public class Bullet{
 				break;
 		}
 	}
+
+	public boolean out(){
+		if (x<0 || x>Game.width || y<0 || y>Game.height)
+			return true;
+		return false;
+	}
 }

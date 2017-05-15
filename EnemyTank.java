@@ -15,10 +15,25 @@ public class EnemyTank extends Tank{
 
 	private class Auto extends Thread{
 		public void run(){
-			while (true)
+			Random rand = new Random();
+			while (alive)
 			{
+				dir = rand.nextInt(4);
+				if (x<0)
+					dir = 2;
+				if (x>Game.width)
+					dir = 0;
+				if (y<0)
+					dir = 3;
+				if (y>Game.height)
+					dir = 1;
+				moving = true;
+
 				fire();
-				try{Thread.sleep(2000);}catch(Exception e){}
+				try{Thread.sleep(1000);}catch(Exception e){}
+				fire();
+				try{Thread.sleep(1000);}catch(Exception e){}
+
 			}
 		}
 	}

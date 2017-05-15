@@ -13,6 +13,7 @@ public class Tank{
 	Color army_green = new Color(77, 153, 0);
 	Color dark_green = new Color(102, 51, 0);
 	boolean moving;
+	boolean alive;
 	Game parent;
 
 	public Tank(int xx, int yy, int d, Game p){
@@ -22,6 +23,7 @@ public class Tank{
 		dir = d;
 		parent = p;
 		moving = false;
+		alive = true;
 	}
 
 	public void draw(Graphics g){

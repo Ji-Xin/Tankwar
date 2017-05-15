@@ -11,6 +11,7 @@ public class Game extends JPanel{
 	Color bground;
 	Tank myTank;
 	Motion mo;
+	Hit hi;
 	ArrayList<Bullet> myBullets;
 	ArrayList<Bullet> enemyBullets;
 	ArrayList<EnemyTank> enemies;
@@ -37,8 +38,13 @@ public class Game extends JPanel{
 		enemies.add(new EnemyTank(500, 200, 0, this));
 		enemies.add(new EnemyTank(500, 400, 0, this));
 
+
+		hi = new Hit();
+		hi.start();
+
 		mo = new Motion();
-		mo.run();
+		mo.start();
+
 
 	}
 
@@ -48,25 +54,33 @@ public class Game extends JPanel{
 
 		g.setColor(Color.black);
 
-		myTank.draw(g);
-		myTank.move();
+		if (myTank.alive)
+		{
+			myTank.draw(g);
+			myTank.move();
+		}
 
 		for (int i=0; i<enemies.size(); i++)
 		{
 			EnemyTank e = enemies.get(i);
 			e.draw(g);
+			e.move();
 		}
 
 		for (int i=0; i<myBullets.size(); i++)
 		{
 			Bullet b = myBullets.get(i);
 			b.draw(g);
+			if (b.out())
+				myBullets.remove(b);
 		}
 
 		for (int i=0; i<enemyBullets.size(); i++)
 		{
 			Bullet b = enemyBullets.get(i);
 			b.draw(g);
+			if (b.out())
+				enemyBullets.remove(b);
 		}
 	}
 
@@ -91,17 +105,47 @@ public class Game extends JPanel{
 
 	private class Listener extends KeyAdapter{
 		public void keyPressed(KeyEvent e){
-			myTank.pressed(e);
+			if (myTank.alive)
+				myTank.pressed(e);
 		}
 
 		public void keyReleased(KeyEvent e){
-			myTank.released(e);
+			if (myTank.alive)
+				myTank.released(e);
 		}
 	}
 
-	/*private class Hit extends Thread{
+	private class Hit extends Thread{
 		public void run(){
-			for (int i=0; i<)
+			while (true)
+			{
+				for (int i=0; i<myBullets.size(); i++)
+					for (int j=0; j<enemies.size(); j++)
+						if (collide(myBullets.get(i), enemies.get(j)))
+						{
+							enemies.get(j).alive = false;
+							enemies.remove(j);
+							myBullets.remove(i);
+						}
+
+				if (myTank.alive)
+				for (int i=0; i<enemyBullets.size(); i++)
+					if (collide(enemyBullets.get(i), myTank))
+					{
+						myTank.alive = false;
+						enemyBullets.remove(i);
+					}
+
+				try{Thread.sleep(50);}catch(Exception e){}
+			}
 		}
-	}*/
+
+		public boolean collide(Bullet b, Tank t){
+			if (b.x+Tank.gun_size>=t.x && b.x-Tank.size<=t.x
+				&&
+				b.y+Tank.gun_size>=t.y && b.y-Tank.size<=t.y)
+				return true;
+			return false;
+		}
+	}
 }
