@@ -15,11 +15,12 @@ public class Game extends JPanel{
 	ArrayList<Bullet> myBullets;
 	ArrayList<Bullet> enemyBullets;
 	ArrayList<EnemyTank> enemies;
+	ArrayList<Wall> walls;
 
 
 	public Game(){
 		bground = Color.white;
-		myTank = new Tank(100, 100, 1, this);
+		myTank = new Tank(100, 500, 1, this);
 
 		frame = new JFrame("Tank War!");
 		frame.setContentPane(this);
@@ -34,9 +35,14 @@ public class Game extends JPanel{
 		myBullets = new ArrayList<Bullet>();
 		enemyBullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<EnemyTank>();
+		walls = new ArrayList<Wall>();
+
+		for (int i=0; i<5; i++)
+			walls.add(new Wall(500+30*i, 500, this));
 
 		enemies.add(new EnemyTank(500, 200, 0, this));
 		enemies.add(new EnemyTank(500, 400, 0, this));
+		enemies.add(new EnemyTank(500, 500, 0, this));
 
 
 		hi = new Hit();
@@ -44,8 +50,6 @@ public class Game extends JPanel{
 
 		mo = new Motion();
 		mo.start();
-
-
 	}
 
 	public void paint(Graphics g){
@@ -82,15 +86,16 @@ public class Game extends JPanel{
 			if (b.out())
 				enemyBullets.remove(b);
 		}
+
+		for (int i=0; i<walls.size(); i++)
+		{
+			Wall w = walls.get(i);
+			w.draw(g);
+		}
 	}
 
 	public static void main(String [] args) throws Exception{
 		Game game = new Game();
-		while (true)
-		{
-			game.repaint();
-			Thread.sleep(50);
-		}
 	}
 
 	private class Motion extends Thread{
@@ -119,6 +124,7 @@ public class Game extends JPanel{
 		public void run(){
 			while (true)
 			{
+				//myBullets and enemyTanks
 				for (int i=0; i<myBullets.size(); i++)
 					for (int j=0; j<enemies.size(); j++)
 						if (collide(myBullets.get(i), enemies.get(j)))
@@ -128,6 +134,7 @@ public class Game extends JPanel{
 							myBullets.remove(i);
 						}
 
+				//enemyBullets and myTank
 				if (myTank.alive)
 				for (int i=0; i<enemyBullets.size(); i++)
 					if (collide(enemyBullets.get(i), myTank))
@@ -136,16 +143,36 @@ public class Game extends JPanel{
 						enemyBullets.remove(i);
 					}
 
+				//myBullets and walls
+				for (int j=0; j<walls.size(); j++)
+					for (int i=0; i<myBullets.size(); i++)
+						if (collide(myBullets.get(i), walls.get(j)))
+							myBullets.remove(i);
+
+				//enemyBullets and walls
+				for (int j=0; j<walls.size(); j++)
+					for (int i=0; i<enemyBullets.size(); i++)
+						if (collide(enemyBullets.get(i), walls.get(j)))
+							enemyBullets.remove(i);
+
 				try{Thread.sleep(50);}catch(Exception e){}
 			}
-		}
+		}		
+	}
 
-		public boolean collide(Bullet b, Tank t){
-			if (b.x+Tank.gun_size>=t.x && b.x-Tank.size<=t.x
-				&&
-				b.y+Tank.gun_size>=t.y && b.y-Tank.size<=t.y)
-				return true;
-			return false;
-		}
+	public boolean collide(Bullet b, Tank t){
+		if (b.x+Tank.gun_size>=t.x && b.x-Tank.size<=t.x
+			&&
+			b.y+Tank.gun_size>=t.y && b.y-Tank.size<=t.y)
+			return true;
+		return false;
+	}
+
+	public boolean collide(Bullet b, Wall t){
+		if (b.x+Tank.gun_size>=t.x && b.x-Tank.size<=t.x
+			&&
+			b.y+Tank.gun_size>=t.y && b.y-Tank.size<=t.y)
+			return true;
+		return false;
 	}
 }

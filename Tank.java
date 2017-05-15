@@ -123,7 +123,7 @@ public class Tank{
 	}
 
 	public void move(){
-		if (moving)
+		if (moving && !this.out())//prevent it goes out
 			switch(dir)
 			{
 				case 0:
@@ -139,5 +139,14 @@ public class Tank{
 					y+=speed;
 					break;
 			}
+	}
+
+	public boolean out(){
+		if ((x<0 && dir==0) ||
+			(x>Game.width-Tank.size && dir==2) ||
+			(y<0 && dir==1) ||
+			(y>Game.height-Tank.size && dir==3))//prevent it gets stuck in walls
+			return true;
+		return false;
 	}
 }

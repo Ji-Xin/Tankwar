@@ -19,14 +19,6 @@ public class EnemyTank extends Tank{
 			while (alive)
 			{
 				dir = rand.nextInt(4);
-				if (x<0)
-					dir = 2;
-				if (x>Game.width)
-					dir = 0;
-				if (y<0)
-					dir = 3;
-				if (y>Game.height)
-					dir = 1;
 				moving = true;
 
 				fire();
