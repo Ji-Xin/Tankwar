@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.util.*;
 import java.lang.*;
 import java.net.*;
+import game.server.*;
 
 // paint
 // thread of repaint
@@ -20,7 +21,7 @@ public class Client extends JPanel{
 	Motion mo;
 
 	Tank myTank;
-	ArrayList<Tank> friends;
+	//ArrayList<Tank> friends;
 	ArrayList<EnemyTank> enemies;
 	ArrayList<Bullet> myBullets;
 	ArrayList<Bullet> enemyBullets;
@@ -30,9 +31,8 @@ public class Client extends JPanel{
 		System.out.println(1);
 	}
 
-	/*public Client(){
+	public Client(){
 		bground = Color.black;
-		myTank = new Tank(100, 500, 1, this);
 
 		frame = new JFrame("Tank War!");
 		frame.setContentPane(this);
@@ -44,7 +44,7 @@ public class Client extends JPanel{
 
 		frame.addKeyListener(new Listener());
 
-		myBullets = new ArrayList<Bullet>();
+		/*myBullets = new ArrayList<Bullet>();
 		enemyBullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<EnemyTank>();
 		walls = new ArrayList<Wall>();
@@ -55,23 +55,27 @@ public class Client extends JPanel{
 		enemies.add(new EnemyTank(500, 200, 0, this));
 		enemies.add(new EnemyTank(500, 300, 0, this));
 		enemies.add(new EnemyTank(500, 400, 0, this));
-		enemies.add(new EnemyTank(500, 500, 0, this));
+		enemies.add(new EnemyTank(500, 500, 0, this));*/
 
-
-		hi = new Hit();
-		hi.start();
 
 		mo = new Motion();
 		mo.start();
 	}
 
+	private class Motion extends Thread{
+		public void run(){
+			while (true)
+			{
+				repaint();
+				try{Thread.sleep(50);}catch(Exception e){}
+			}
+		}
+	}
 
 
 	public void paint(Graphics g){
 		g.setColor(bground);
 		g.fillRect(0, 0, width, height);
-
-		g.setColor(Color.black);
 
 		if (myTank.alive)
 		{
@@ -107,5 +111,5 @@ public class Client extends JPanel{
 			Wall w = walls.get(i);
 			w.draw(g);
 		}
-	}*/
+	}
 }

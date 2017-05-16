@@ -7,6 +7,8 @@ import java.util.*;
 import java.lang.*;
 import java.net.*;
 
+// mainly focus on solving hits and bullets out of panel
+
 public class Game extends JPanel{
 	JFrame frame;
 	public static final int width=800, height=600;
