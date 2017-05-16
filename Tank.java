@@ -14,6 +14,7 @@ public class Tank{
 	Color dark_green = new Color(102, 51, 0);
 	boolean moving;
 	boolean alive;
+	boolean colliding;//with walls or other tanks
 	Game parent;
 
 	public Tank(int xx, int yy, int d, Game p){
@@ -123,7 +124,7 @@ public class Tank{
 	}
 
 	public void move(){
-		if (moving && !this.out())//prevent it goes out
+		if (moving && !this.out() && !colliding)//prevent it goes out
 			switch(dir)
 			{
 				case 0:
@@ -147,6 +148,7 @@ public class Tank{
 			(y<0 && dir==1) ||
 			(y>Game.height-Tank.size && dir==3))//prevent it gets stuck in walls
 			return true;
+
 		return false;
 	}
 }
