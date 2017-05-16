@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
 import java.lang.*;
+import java.net.*;
 
 public class Game extends JPanel{
 	JFrame frame;
@@ -20,7 +21,7 @@ public class Game extends JPanel{
 
 
 	public Game(){
-		bground = Color.white;
+		bground = Color.black;
 		myTank = new Tank(100, 500, 1, this);
 
 		frame = new JFrame("Tank War!");
@@ -207,11 +208,12 @@ public class Game extends JPanel{
 	}
 
 	public boolean collide(Tank t, Wall w){
+		int rest=5; // pixels between collision
 		if (
-		(t.dir==0 && Math.abs(t.y-w.y)<Tank.size && t.x<=w.x+Tank.size && t.x>=w.x) ||
-		(t.dir==1 && Math.abs(t.x-w.x)<Tank.size && t.y<=w.y+Tank.size && t.y>=w.y) ||
-		(t.dir==2 && Math.abs(t.y-w.y)<Tank.size && t.x<=w.x && t.x>=w.x-Tank.size) ||
-		(t.dir==3 && Math.abs(t.x-w.x)<Tank.size && t.y<=w.y && t.y>=w.y-Tank.size) )
+		(t.dir==0 && Math.abs(t.y-w.y)<Tank.size && t.x<=w.x+Tank.size+rest && t.x>=w.x) ||
+		(t.dir==1 && Math.abs(t.x-w.x)<Tank.size && t.y<=w.y+Tank.size+rest && t.y>=w.y) ||
+		(t.dir==2 && Math.abs(t.y-w.y)<Tank.size && t.x<=w.x && t.x>=w.x-Tank.size-rest) ||
+		(t.dir==3 && Math.abs(t.x-w.x)<Tank.size && t.y<=w.y && t.y>=w.y-Tank.size-rest) )
 			return true;
 		return false;
 	}

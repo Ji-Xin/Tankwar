@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Bullet{
 	int x,y;
-	static int speed=5;
+	static int speed=10;
 	int dir;
 	boolean mine;
 
@@ -21,9 +21,9 @@ public class Bullet{
 
 	public void draw(Graphics g){
 		if (mine)
-			g.setColor(Color.black);
+			g.setColor(Color.white);
 		else
-			g.setColor(Color.magenta);
+			g.setColor(Color.cyan);
 		g.fillRect(x, y, Tank.gun_size, Tank.gun_size);
 		this.move();
 	}

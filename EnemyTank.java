@@ -23,9 +23,6 @@ public class EnemyTank extends Tank{
 
 				fire();
 				try{Thread.sleep(1000);}catch(Exception e){}
-				fire();
-				try{Thread.sleep(1000);}catch(Exception e){}
-
 			}
 		}
 	}

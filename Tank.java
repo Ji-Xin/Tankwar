@@ -16,6 +16,7 @@ public class Tank{
 	boolean alive;
 	boolean colliding;//with walls or other tanks
 	Game parent;
+	boolean fire_ready;
 
 	public Tank(int xx, int yy, int d, Game p){
 		mine = true;
@@ -25,6 +26,7 @@ public class Tank{
 		parent = p;
 		moving = false;
 		alive = true;
+		fire_ready = true;
 	}
 
 	public void draw(Graphics g){
@@ -83,38 +85,50 @@ public class Tank{
 	}
 
 	public void fire(){
-		Bullet bul=null;
-		switch(dir)
+		if (fire_ready)
 		{
-			case 0:
-				bul = new Bullet(
-					x-Tank.size/2,
-					y+Tank.size/2-Tank.gun_size/2,
-					dir, mine);
-				break;
-			case 1:
-				bul = new Bullet(
-					x+Tank.size/2-Tank.gun_size/2,
-					y-Tank.size/2,
-					dir, mine);
-				break;
-			case 2:
-				bul = new Bullet(
-					x+Tank.size*3/2,
-					y+Tank.size/2-Tank.gun_size/2,
-					dir, mine);
-				break;
-			case 3:
-				bul = new Bullet(
-					x+Tank.size/2-Tank.gun_size/2,
-					y+Tank.size*3/2,
-					dir, mine);
-				break;
+			Bullet bul=null;
+			switch(dir)
+			{
+				case 0:
+					bul = new Bullet(
+						x-Tank.size/2,
+						y+Tank.size/2-Tank.gun_size/2,
+						dir, mine);
+					break;
+				case 1:
+					bul = new Bullet(
+						x+Tank.size/2-Tank.gun_size/2,
+						y-Tank.size/2,
+						dir, mine);
+					break;
+				case 2:
+					bul = new Bullet(
+						x+Tank.size*3/2,
+						y+Tank.size/2-Tank.gun_size/2,
+						dir, mine);
+					break;
+				case 3:
+					bul = new Bullet(
+						x+Tank.size/2-Tank.gun_size/2,
+						y+Tank.size*3/2,
+						dir, mine);
+					break;
+			}
+			if (mine)
+				parent.myBullets.add(bul);
+			else
+				parent.enemyBullets.add(bul);
+			(new FireWait()).start();
 		}
-		if (mine)
-			parent.myBullets.add(bul);
-		else
-			parent.enemyBullets.add(bul);
+	}
+
+	private class FireWait extends Thread{
+		public void run(){
+			fire_ready = false;
+			try{Thread.sleep(700);}catch(Exception e){}
+			fire_ready = true;
+		}
 	}
 
 	public void released(KeyEvent e){
@@ -124,7 +138,7 @@ public class Tank{
 	}
 
 	public void move(){
-		if (moving && !this.out() && !colliding)//prevent it goes out
+		if (moving && !this.out() && !colliding)//prevent it goes out or into the wall
 			switch(dir)
 			{
 				case 0:
