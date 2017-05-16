@@ -15,7 +15,7 @@ import java.net.*;
 
 
 public class Client extends JPanel{
-	/*JFrame frame;
+	JFrame frame;
 	Color bground;
 	Tank myTank;
 	ArrayList<Tank> friends;
@@ -104,5 +104,5 @@ public class Client extends JPanel{
 			Wall w = walls.get(i);
 			w.draw(g);
 		}
-	}*/
+	}
 }
