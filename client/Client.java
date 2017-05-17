@@ -17,45 +17,47 @@ import game.server.*;
 
 public class Client extends JPanel{
 	JFrame frame;
-	Color background;
 	Motion mo;
 
+	// the followings are only used for drawing.
+	// their locations every moment are downloaded from the server
 	Tank myTank;
-	//ArrayList<Tank> friends;
+	ArrayList<Tank> friends;
 	ArrayList<EnemyTank> enemies;
 	ArrayList<Bullet> myBullets;
 	ArrayList<Bullet> enemyBullets;
 	ArrayList<Wall> walls;
 
+	// the followings are used for network connection
+	Socket me;
+	BufferedReader receiver;
+	DataOutpurStream sender;
+
+
 	public static void main(String [] args){
-		System.out.println(1);
+		Client c = new Client();
 	}
 
 	public Client(){
-		bground = Color.black;
-
 		frame = new JFrame("Tank War!");
 		frame.setContentPane(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLocation(500, 50);
-		frame.setSize(width, height);
+		frame.setSize(Game.width, Game.height);
 		frame.setResizable(false);
 		frame.setVisible(true);
+		//frame.addKeyListener(new Listener());
 
-		frame.addKeyListener(new Listener());
-
-		/*myBullets = new ArrayList<Bullet>();
-		enemyBullets = new ArrayList<Bullet>();
+		friends = new ArrayList<Tank>();
 		enemies = new ArrayList<EnemyTank>();
+		myBullets = new ArrayList<Bullet>();
+		enemyBullets = new ArrayList<Bullet>();
 		walls = new ArrayList<Wall>();
 
-		for (int i=0; i<10; i++)
-			walls.add(new Wall(150+30*i, 500, this));
-
-		enemies.add(new EnemyTank(500, 200, 0, this));
-		enemies.add(new EnemyTank(500, 300, 0, this));
-		enemies.add(new EnemyTank(500, 400, 0, this));
-		enemies.add(new EnemyTank(500, 500, 0, this));*/
+		String sIP = "127.0.0.1";
+		me = new Socket(sIP, 2288);
+		sender = new DataOutputStream(me.getOutputStream());
+		receiver = new BufferedReader(new InputStreamReader(me.getInputStream()));
 
 
 		mo = new Motion();
@@ -66,50 +68,37 @@ public class Client extends JPanel{
 		public void run(){
 			while (true)
 			{
+				//receive motion
 				repaint();
 				try{Thread.sleep(50);}catch(Exception e){}
 			}
 		}
 	}
 
-
 	public void paint(Graphics g){
-		g.setColor(bground);
-		g.fillRect(0, 0, width, height);
+		g.setColor(Color.black);
+		g.fillRect(0, 0, Game.width, Game.height);
 
 		if (myTank.alive)
-		{
 			myTank.draw(g);
-			myTank.move();
-		}
+
+		for (int i=0; i<friends.size(); i++)
+			friends.get(i).draw(g);
 
 		for (int i=0; i<enemies.size(); i++)
-		{
-			EnemyTank e = enemies.get(i);
-			e.draw(g);
-			e.move();
-		}
+			enemies.get(i).draw(g);
 
 		for (int i=0; i<myBullets.size(); i++)
-		{
-			Bullet b = myBullets.get(i);
-			b.draw(g);
-			if (b.out())
-				myBullets.remove(b);
-		}
+			myBullets.get(i).draw(g);
 
 		for (int i=0; i<enemyBullets.size(); i++)
-		{
-			Bullet b = enemyBullets.get(i);
-			b.draw(g);
-			if (b.out())
-				enemyBullets.remove(b);
-		}
+			enemyBullets.get(i).draw(g);
 
 		for (int i=0; i<walls.size(); i++)
-		{
-			Wall w = walls.get(i);
-			w.draw(g);
-		}
+			walls.get(i).draw(g);
+	}
+
+	private class chat extends Thread{
+
 	}
 }

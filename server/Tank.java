@@ -13,7 +13,7 @@ public class Tank{
 	Color army_green = new Color(77, 153, 0);
 	Color dark_green = new Color(102, 51, 0);
 	boolean moving;
-	boolean alive;
+	public boolean alive;
 	boolean colliding;//with walls or other tanks
 	Game parent;
 	boolean fire_ready;
