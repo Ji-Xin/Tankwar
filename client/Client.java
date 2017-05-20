@@ -21,6 +21,8 @@ public class Client extends JPanel{
 	Motion mo;
 	Chat ch;
 
+	String what; //motion to be sent to server
+
 	// the followings are only used for drawing.
 	// their locations every moment are downloaded from the server
 	WalkingTank myTank;
@@ -41,6 +43,8 @@ public class Client extends JPanel{
 	}
 
 	public Client() throws Exception{
+		what = "";
+
 		frame = new JFrame("Tank War!");
 		frame.setContentPane(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -48,7 +52,7 @@ public class Client extends JPanel{
 		frame.setSize(Game.width, Game.height);
 		frame.setResizable(false);
 		frame.setVisible(true);
-		//frame.addKeyListener(new Listener());
+		frame.addKeyListener(new Listener());
 
 		myTank = new WalkingTank(100, 100, 2, true);
 		friends = new ArrayList<WalkingTank>();
@@ -144,6 +148,7 @@ public class Client extends JPanel{
 					yy = Integer.parseInt(receiver.readLine());
 					dd = Integer.parseInt(receiver.readLine());
 					myTank.set(xx, yy, dd);
+					sender.writeBytes(what+"\n");
 
 					//enemyTanks
 					for (int i=0; i<enemies.size(); i++)
@@ -171,15 +176,22 @@ public class Client extends JPanel{
 		}
 	}
 
-	/*private class Listener extends KeyAdapter{
+	private class Listener extends KeyAdapter{
 		public void keyPressed(KeyEvent e){
-			if (myTank.alive)
-				myTank.pressed(e);
+			int temp = e.getKeyCode();
+			if ((37<=temp) && (temp<=40))
+			{
+				if (what.length()==2)
+					what = String.valueOf(temp-37) + what.substring(1);
+				else
+					what = String.valueOf(temp-37);
+			}
+			if ((temp==32) && what.length()==1)
+				what = what +"f";
 		}
 
 		public void keyReleased(KeyEvent e){
-			if (myTank.alive)
-				myTank.released(e);
+			what = "";
 		}
-	}*/
+	}
 }

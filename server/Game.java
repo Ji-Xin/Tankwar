@@ -112,6 +112,17 @@ public class Game{
 						dos.writeBytes(String.valueOf(cTanks.get(i).y)+"\n");
 						dos.writeBytes(String.valueOf(cTanks.get(i).dir)+"\n");
 
+						String what = br.readLine();
+						if (what.length()==0)
+							cTanks.get(i).moving = false;
+						else if (what.length()>=1)
+						{
+							cTanks.get(i).moving = true;
+							cTanks.get(i).dir = Integer.parseInt(what.substring(0,1));
+							if (what.length()==2)
+								cTanks.get(i).fire();
+						}
+
 						//enemyTanks
 						for (i=0; i<enemies.size(); i++)
 						{
