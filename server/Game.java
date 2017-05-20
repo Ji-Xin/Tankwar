@@ -3,6 +3,7 @@ package game.server;
 import java.util.*;
 import java.lang.*;
 import java.net.*;
+import java.io.*;
 
 // mainly focus on solving hits and bullets out of panel
 
@@ -10,6 +11,7 @@ public class Game{
 	public static final int width=800, height=600;
 	Hit hi;
 	Motion mo;
+	Chat ch;
 
 	ArrayList<Tank> cTanks;
 	ArrayList<EnemyTank> enemies;
@@ -24,6 +26,10 @@ public class Game{
 
 
 	public Game(){
+		clients = new ArrayList<Socket>();
+		receivers = new ArrayList<BufferedReader>();
+		senders = new ArrayList<DataOutputStream>();
+
 		cTanks = new ArrayList<Tank>();
 		enemies = new ArrayList<EnemyTank>();
 		myBullets = new ArrayList<Bullet>();
@@ -31,65 +37,137 @@ public class Game{
 		walls = new ArrayList<Wall>();
 
 		for (int i=0; i<10; i++)
-			walls.add(new Wall(150+30*i, 500, this));
+			walls.add(new Wall(150+30*i, 500));
 
-		for (int i=0; i<8; i++)
+		for (int i=0; i<3; i++)
 			enemies.add(new EnemyTank(500, i*60+50, 0, this));
 
 		init();
 
-		hi = new Hit();
-		hi.start();
+		ch = new Chat();
+		ch.start();
+
+		/*hi = new Hit();
+		hi.start();*/
 
 		mo = new Motion();
 		mo.start();
 	}
 
 	public void init(){
-		server = new ServerSocket(2288);
-		while (true)
-		{
-			try{
-				Socket temp = socket.accept();
+		try{
+			server = new ServerSocket(2288);
+			while (true)
+			{
+				Socket temp = server.accept();
 				BufferedReader br = new BufferedReader(
 					new InputStreamReader(temp.getInputStream()));
 				DataOutputStream dos = new DataOutputStream(temp.getOutputStream());
+
 				clients.add(temp);
 				receivers.add(br);
 				senders.add(dos);
-			} catch (Exception ex){}
+
+				//walls
+				dos.writeBytes(String.valueOf(walls.size())+"\n");
+				for (int i=0; i<walls.size(); i++)
+				{
+					dos.writeBytes(String.valueOf(walls.get(i).x)+"\n");
+					dos.writeBytes(String.valueOf(walls.get(i).y)+"\n");
+				}
+
+				//"my"Tank
+				int xx, yy, dd;
+				xx = Integer.parseInt(br.readLine());
+				yy = Integer.parseInt(br.readLine());
+				dd = Integer.parseInt(br.readLine());
+				cTanks.add(new Tank(xx, yy, dd, this));
+
+				//enemyTanks
+				dos.writeBytes(String.valueOf(enemies.size())+"\n");
+				for (int i=0; i<enemies.size(); i++)
+				{
+					dos.writeBytes(String.valueOf(enemies.get(i).x)+"\n");
+					dos.writeBytes(String.valueOf(enemies.get(i).y)+"\n");
+					dos.writeBytes(String.valueOf(enemies.get(i).dir)+"\n");
+				}
+
+				break;
+			}
+		} catch (Exception ex){}
+	}
+
+	private class Chat extends Thread{
+		public void run(){
+			try{
+				while (true)
+				{
+					for (int i=0; i<clients.size(); i++)
+					{
+						BufferedReader br = receivers.get(i);
+						DataOutputStream dos = senders.get(i);
+
+						//"my"Tank
+						dos.writeBytes(String.valueOf(cTanks.get(i).x)+"\n");
+						dos.writeBytes(String.valueOf(cTanks.get(i).y)+"\n");
+						dos.writeBytes(String.valueOf(cTanks.get(i).dir)+"\n");
+
+						//enemyTanks
+						for (i=0; i<enemies.size(); i++)
+						{
+							dos.writeBytes(String.valueOf(enemies.get(i).x)+"\n");
+							dos.writeBytes(String.valueOf(enemies.get(i).y)+"\n");
+							dos.writeBytes(String.valueOf(enemies.get(i).dir)+"\n");
+						}
+
+						//enemyBullets
+						dos.writeBytes(String.valueOf(enemyBullets.size())+"\n");
+						for (i=0; i<enemyBullets.size(); i++)
+						{
+							dos.writeBytes(String.valueOf(enemyBullets.get(i).x)+"\n");
+							dos.writeBytes(String.valueOf(enemyBullets.get(i).y)+"\n");
+						}
+					}
+
+					Thread.sleep(50);
+				}
+			} catch(Exception e){}
 		}
 	}
 
-	/*public static void main(String [] args) throws Exception{
+	public static void main(String [] args) throws Exception{
+		System.out.println("Server starts.");
 		Game game = new Game();
-	}*/
+	}
 
 	private class Motion extends Thread{
 		public void run(){
-			while (true)
-			{
-				/*every one move!*/
-				try{Thread.sleep(50);}catch(Exception e){}
-			}
+			try{
+				while (true)
+				{
+					//cTanks
+					for (int i=0; i<cTanks.size(); i++)
+						cTanks.get(i).move();
+
+					//enemies
+					for (int i=0; i<enemies.size(); i++)
+						enemies.get(i).move();
+
+					//enemyBullets
+					for (int i=0; i<enemyBullets.size(); i++)
+						enemyBullets.get(i).move();
+
+					Thread.sleep(50);
+				}
+			}catch(Exception e){}
 		}
 	}
 
-	private class Listener extends KeyAdapter{
-		public void keyPressed(KeyEvent e){
-			if (myTank.alive)
-				myTank.pressed(e);
-		}
-
-		public void keyReleased(KeyEvent e){
-			if (myTank.alive)
-				myTank.released(e);
-		}
-	}
+	
 
 	private class Hit extends Thread{
 		public void run(){
-			while (true)
+			/*while (true)
 			{
 				try{
 					//myBullets and enemyTanks
@@ -151,7 +229,7 @@ public class Game{
 
 					Thread.sleep(50);
 				}catch(Exception e){}
-			}
+			}*/
 		}		
 	}
 

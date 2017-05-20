@@ -6,15 +6,13 @@ import javax.swing.*;
 import java.util.*;
 
 public class Wall{
-	Game parent;
 	int x,y;
 	Color br1 = new Color(204, 102, 0);
 	Color br2 = new Color(170, 51, 17);
 
-	public Wall(int xx, int yy, Game p){
+	public Wall(int xx, int yy){
 		x = xx;
 		y = yy;
-		parent = p;
 	}
 
 	public void draw(Graphics g){

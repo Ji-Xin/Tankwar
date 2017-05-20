@@ -7,6 +7,12 @@ import java.util.*;
 
 public class EnemyTank extends Tank{
 
+	public EnemyTank(int xx, int yy, int d){
+		super(xx, yy, d);
+		mine = false;
+		(new Auto()).start();
+	}
+
 	public EnemyTank(int xx, int yy, int d, Game p){
 		super(xx, yy, d, p);
 		mine = false;

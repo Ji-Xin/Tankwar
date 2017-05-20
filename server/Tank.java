@@ -6,8 +6,8 @@ import javax.swing.*;
 import java.util.*;
 
 public class Tank{
-	int x,y; //position
-	int dir; //direction{left37, up38, right39, down40}
+	public int x,y; //position
+	public int dir; //direction{left37, up38, right39, down40}
 	boolean mine; //my tank or enemy
 	public static final int size=30, gun_size=6, speed=3;
 	Color army_green = new Color(77, 153, 0);
@@ -17,6 +17,16 @@ public class Tank{
 	boolean colliding;//with walls or other tanks
 	Game parent;
 	boolean fire_ready;
+
+	public Tank(int xx, int yy, int d){
+		mine = true;
+		x = xx;
+		y = yy;
+		dir = d;
+		moving = false;
+		alive = true;
+		fire_ready = true;
+	}
 
 	public Tank(int xx, int yy, int d, Game p){
 		mine = true;
@@ -28,6 +38,7 @@ public class Tank{
 		alive = true;
 		fire_ready = true;
 	}
+
 
 	public void draw(Graphics g){
 		if (mine)
@@ -137,23 +148,24 @@ public class Tank{
 			moving = false;
 	}
 
-	public void move(){
+	public boolean move(){
 		if (moving && !this.out() && !colliding)//prevent it goes out or into the wall
 			switch(dir)
 			{
 				case 0:
 					x-=speed;
-					break;
+					return true;
 				case 1:
 					y-=speed;
-					break;
+					return true;
 				case 2:
 					x+=speed;
-					break;
+					return true;
 				case 3:
 					y+=speed;
-					break;
+					return true;
 			}
+		return false;
 	}
 
 	public boolean out(){
