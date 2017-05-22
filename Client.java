@@ -6,103 +6,38 @@ import javax.swing.*;
 import java.util.*;
 import java.lang.*;
 import java.net.*;
+import java.io.*;
 
-// paint
-// thread of repaint
-// walls receive at beginning
-// tanks and bullets receive instantly(only receive position, motion, objects remain on server)
-// send key events
-
-
-public class Client extends JPanel{
-	/*JFrame frame;
-	Color bground;
-	Tank myTank;
-	ArrayList<Tank> friends;
-	Motion mo;
-	Hit hi;
-	ArrayList<Bullet> myBullets;
-	ArrayList<Bullet> enemyBullets;
-	ArrayList<EnemyTank> enemies;
-	ArrayList<Wall> walls;
+public class Client extends Game{
+	Socket me;
+	DataOutputStream sender;
+	BufferedReader receiver;
 
 
-	public Client(){
-		bground = Color.black;
-		myTank = new Tank(100, 500, 1, this);
+	public Client() throws Exception{
+		myTank = new Tank(100, 300, 1, this);
 
-		frame = new JFrame("Tank War!");
-		frame.setContentPane(this);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocation(500, 50);
-		frame.setSize(width, height);
-		frame.setResizable(false);
-		frame.setVisible(true);
+		String sIP = "127.0.0.1";
+		me = new Socket(sIP, Server.serverPort);
+		sender = new DataOutputStream(me.getOutputStream());
+		receiver = new BufferedReader(new InputStreamReader(me.getInputStream()));
 
-		frame.addKeyListener(new Listener());
+		sender.writeBytes(myTank.x+"\n");
+		sender.writeBytes(myTank.y+"\n");
+		sender.writeBytes(myTank.dir+"\n");
+		
+		int xx = Integer.parseInt(receiver.readLine()),
+			yy = Integer.parseInt(receiver.readLine()),
+			dd = Integer.parseInt(receiver.readLine());
+		fTank = new Tank(xx, yy, dd, this);
+		fTank.friend = true;
 
-		myBullets = new ArrayList<Bullet>();
-		enemyBullets = new ArrayList<Bullet>();
-		enemies = new ArrayList<EnemyTank>();
-		walls = new ArrayList<Wall>();
-
-		for (int i=0; i<10; i++)
-			walls.add(new Wall(150+30*i, 500, this));
-
-		enemies.add(new EnemyTank(500, 200, 0, this));
-		enemies.add(new EnemyTank(500, 300, 0, this));
-		enemies.add(new EnemyTank(500, 400, 0, this));
-		enemies.add(new EnemyTank(500, 500, 0, this));
-
-
-		hi = new Hit();
 		hi.start();
-
-		mo = new Motion();
 		mo.start();
 	}
 
 
-
-	public void paint(Graphics g){
-		g.setColor(bground);
-		g.fillRect(0, 0, width, height);
-
-		g.setColor(Color.black);
-
-		if (myTank.alive)
-		{
-			myTank.draw(g);
-			myTank.move();
-		}
-
-		for (int i=0; i<enemies.size(); i++)
-		{
-			EnemyTank e = enemies.get(i);
-			e.draw(g);
-			e.move();
-		}
-
-		for (int i=0; i<myBullets.size(); i++)
-		{
-			Bullet b = myBullets.get(i);
-			b.draw(g);
-			if (b.out())
-				myBullets.remove(b);
-		}
-
-		for (int i=0; i<enemyBullets.size(); i++)
-		{
-			Bullet b = enemyBullets.get(i);
-			b.draw(g);
-			if (b.out())
-				enemyBullets.remove(b);
-		}
-
-		for (int i=0; i<walls.size(); i++)
-		{
-			Wall w = walls.get(i);
-			w.draw(g);
-		}
-	}*/
+	public static void main(String [] args) throws Exception{
+		Client c = new Client();
+	}
 }

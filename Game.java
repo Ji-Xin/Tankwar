@@ -11,10 +11,10 @@ public class Game extends JPanel{
 	JFrame frame;
 	public static final int width=800, height=600;
 	Color bground;
-	Tank myTank;
+	Tank myTank, fTank; //friendTank
 	Motion mo;
 	Hit hi;
-	ArrayList<Bullet> myBullets;
+	ArrayList<Bullet> myBullets; //including friend bullets
 	ArrayList<Bullet> enemyBullets;
 	ArrayList<EnemyTank> enemies;
 	ArrayList<Wall> walls;
@@ -22,7 +22,6 @@ public class Game extends JPanel{
 
 	public Game(){
 		bground = Color.black;
-		myTank = new Tank(100, 500, 1, this);
 
 		frame = new JFrame("Tank War!");
 		frame.setContentPane(this);
@@ -49,59 +48,64 @@ public class Game extends JPanel{
 
 
 		hi = new Hit();
-		hi.start();
-
 		mo = new Motion();
-		mo.start();
 	}
 
 	public void paint(Graphics g){
-		g.setColor(bground);
-		g.fillRect(0, 0, width, height);
+		try{
+			g.setColor(bground);
+			g.fillRect(0, 0, width, height);
 
-		g.setColor(Color.black);
+			g.setColor(Color.black);
 
-		if (myTank.alive)
-		{
-			myTank.draw(g);
-			myTank.move();
-		}
+			if (myTank.alive)
+			{
+				myTank.draw(g);
+				myTank.move();
+			}
 
-		for (int i=0; i<enemies.size(); i++)
-		{
-			EnemyTank e = enemies.get(i);
-			e.draw(g);
-			e.move();
-		}
+			for (int i=0; i<enemies.size(); i++)
+			{
+				EnemyTank e = enemies.get(i);
+				e.draw(g);
+				e.move();
+			}
 
-		for (int i=0; i<myBullets.size(); i++)
-		{
-			Bullet b = myBullets.get(i);
-			b.draw(g);
-			if (b.out())
-				myBullets.remove(b);
-		}
+			for (int i=0; i<myBullets.size(); i++)
+			{
+				Bullet b = myBullets.get(i);
+				b.draw(g);
+				if (b.out())
+					myBullets.remove(b);
+			}
 
-		for (int i=0; i<enemyBullets.size(); i++)
-		{
-			Bullet b = enemyBullets.get(i);
-			b.draw(g);
-			if (b.out())
-				enemyBullets.remove(b);
-		}
+			for (int i=0; i<enemyBullets.size(); i++)
+			{
+				Bullet b = enemyBullets.get(i);
+				b.draw(g);
+				if (b.out())
+					enemyBullets.remove(b);
+			}
 
-		for (int i=0; i<walls.size(); i++)
-		{
-			Wall w = walls.get(i);
-			w.draw(g);
-		}
+			for (int i=0; i<walls.size(); i++)
+			{
+				Wall w = walls.get(i);
+				w.draw(g);
+			}
+
+			if (fTank.alive)
+			{
+				fTank.draw(g);
+				fTank.move();
+			}
+		} catch(Exception e) {System.err.println(e);}
 	}
 
 	public static void main(String [] args) throws Exception{
 		Game game = new Game();
 	}
 
-	private class Motion extends Thread{
+	public class Motion extends Thread{
 		public void run(){
 			while (true)
 			{
@@ -111,7 +115,7 @@ public class Game extends JPanel{
 		}
 	}
 
-	private class Listener extends KeyAdapter{
+	public class Listener extends KeyAdapter{
 		public void keyPressed(KeyEvent e){
 			if (myTank.alive)
 				myTank.pressed(e);
@@ -123,7 +127,7 @@ public class Game extends JPanel{
 		}
 	}
 
-	private class Hit extends Thread{
+	public class Hit extends Thread{
 		public void run(){
 			while (true)
 			{

@@ -16,6 +16,7 @@ public class EnemyTank extends Tank{
 	private class Auto extends Thread{
 		public void run(){
 			Random rand = new Random();
+			try{Thread.sleep(rand.nextInt(400));}catch(Exception e){}
 			while (alive)
 			{
 				dir = rand.nextInt(4);

@@ -8,7 +8,8 @@ import java.util.*;
 public class Tank{
 	int x,y; //position
 	int dir; //direction{left37, up38, right39, down40}
-	boolean mine; //my tank or enemy
+	boolean mine; //true for myTank and friendTank, false for enemyTank
+	public boolean friend;
 	public static final int size=30, gun_size=6, speed=3;
 	Color army_green = new Color(77, 153, 0);
 	Color dark_green = new Color(102, 51, 0);
@@ -19,6 +20,7 @@ public class Tank{
 	boolean fire_ready;
 
 	public Tank(int xx, int yy, int d, Game p){
+		friend = false;
 		mine = true;
 		x = xx;
 		y = yy;
@@ -37,7 +39,11 @@ public class Tank{
 		g.fillRect(x, y, size, size);
 
 		if (mine)
+		{
 			g.setColor(dark_green);
+			if (friend)
+				g.setColor(Color.blue);
+		}
 		else
 			g.setColor(Color.orange);
 		switch(dir)
