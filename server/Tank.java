@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
+import game.client.*;
 
 public class Tank{
 	public int x,y; //position
@@ -14,11 +15,15 @@ public class Tank{
 	Color dark_green = new Color(102, 51, 0);
 	public boolean moving;
 	public boolean alive;
+	boolean server; //whether on server
 	boolean colliding;//with walls or other tanks
 	Game parent;
+	Client cparent;
 	boolean fire_ready;
 
-	public Tank(int xx, int yy, int d){
+	public Tank(int xx, int yy, int d, Client c){
+		server = false;
+		cparent = c;
 		mine = true;
 		x = xx;
 		y = yy;
@@ -29,6 +34,7 @@ public class Tank{
 	}
 
 	public Tank(int xx, int yy, int d, Game p){
+		server = true;
 		mine = true;
 		x = xx;
 		y = yy;
@@ -126,10 +132,15 @@ public class Tank{
 						dir, mine);
 					break;
 			}
-			if (mine)
-				parent.myBullets.add(bul);
+			if (server)
+			{
+				if (mine)
+					parent.cBullets.add(bul);
+				else
+					parent.enemyBullets.add(bul);
+			}
 			else
-				parent.enemyBullets.add(bul);
+				cparent.myBullets.add(bul);
 			(new FireWait()).start();
 		}
 	}
@@ -176,5 +187,9 @@ public class Tank{
 			return true;
 
 		return false;
+	}
+
+	public String show(){
+		return String.valueOf(x)+"\t"+String.valueOf(y)+"\t"+String.valueOf(dir);
 	}
 }

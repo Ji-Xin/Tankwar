@@ -7,12 +7,6 @@ import java.util.*;
 
 public class EnemyTank extends Tank{
 
-	public EnemyTank(int xx, int yy, int d){
-		super(xx, yy, d);
-		mine = false;
-		(new Auto()).start();
-	}
-
 	public EnemyTank(int xx, int yy, int d, Game p){
 		super(xx, yy, d, p);
 		mine = false;
@@ -21,14 +15,14 @@ public class EnemyTank extends Tank{
 
 	private class Auto extends Thread{
 		public void run(){
+			moving = true;
 			Random rand = new Random();
 			while (alive)
 			{
+				try{Thread.sleep(1000);}catch(Exception e){}
 				dir = rand.nextInt(4);
-				moving = true;
 
 				fire();
-				try{Thread.sleep(1000);}catch(Exception e){}
 			}
 		}
 	}

@@ -12,8 +12,6 @@ import java.io.*;
 // paint
 // thread of repaint
 // walls receive at beginning
-// tanks and bullets receive instantly(only receive position, motion, objects remain on server)
-// send key events
 
 
 public class Client extends JPanel{
@@ -21,14 +19,10 @@ public class Client extends JPanel{
 	Motion mo;
 	Chat ch;
 
-	String what; //motion to be sent to server
-
-	// the followings are only used for drawing.
-	// their locations every moment are downloaded from the server
-	WalkingTank myTank;
+	Tank myTank;
 	ArrayList<WalkingTank> friends;
 	ArrayList<WalkingTank> enemies;
-	ArrayList<Bullet> myBullets;
+	public ArrayList<Bullet> myBullets;
 	ArrayList<Bullet> enemyBullets;
 	ArrayList<Wall> walls;
 
@@ -43,18 +37,16 @@ public class Client extends JPanel{
 	}
 
 	public Client() throws Exception{
-		what = "";
-
-		frame = new JFrame("Tank War!");
+		frame = new JFrame("Tank War !");
 		frame.setContentPane(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocation(0, 0);//500, 50
+		frame.setLocation(3000, 1000);//500, 50
 		frame.setSize(Game.width, Game.height);
 		frame.setResizable(false);
 		frame.setVisible(true);
 		frame.addKeyListener(new Listener());
 
-		myTank = new WalkingTank(100, 100, 2, true);
+		myTank = new Tank(100, 100, 2, this);
 		friends = new ArrayList<WalkingTank>();
 		enemies = new ArrayList<WalkingTank>();
 		myBullets = new ArrayList<Bullet>();
@@ -78,7 +70,6 @@ public class Client extends JPanel{
 		public void run(){
 			while (true)
 			{
-				//receive motion
 				repaint();
 				try{Thread.sleep(50);}catch(Exception e){}
 			}
@@ -97,8 +88,8 @@ public class Client extends JPanel{
 		for (int i=0; i<enemies.size(); i++)
 			enemies.get(i).draw(g);
 
-		/*for (int i=0; i<myBullets.size(); i++)
-			myBullets.get(i).draw(g);*/
+		for (int i=0; i<myBullets.size(); i++)
+			myBullets.get(i).draw(g);
 
 		for (int i=0; i<enemyBullets.size(); i++)
 			enemyBullets.get(i).draw(g);
@@ -137,6 +128,7 @@ public class Client extends JPanel{
 					dd = Integer.parseInt(receiver.readLine());
 					enemies.add(new WalkingTank(xx, yy, dd, false));
 				}
+				//end of init
 
 				//regular communication
 				while (true)
@@ -144,11 +136,11 @@ public class Client extends JPanel{
 					int xx, yy, dd;
 
 					//myTank
-					xx = Integer.parseInt(receiver.readLine());
-					yy = Integer.parseInt(receiver.readLine());
-					dd = Integer.parseInt(receiver.readLine());
-					myTank.set(xx, yy, dd);
-					sender.writeBytes(what+"\n");
+					myTank.move();
+					sender.writeBytes(String.valueOf(myTank.x)+"\n");
+					sender.writeBytes(String.valueOf(myTank.y)+"\n");
+					sender.writeBytes(String.valueOf(myTank.dir)+"\n");
+
 
 					//enemyTanks
 					for (int i=0; i<enemies.size(); i++)
@@ -177,6 +169,17 @@ public class Client extends JPanel{
 	}
 
 	private class Listener extends KeyAdapter{
+ 		public void keyPressed(KeyEvent e){
+ 			if (myTank.alive)
+ 				myTank.pressed(e);
+ 		}
+ 		public void keyReleased(KeyEvent e){
+ 			if (myTank.alive)
+ 				myTank.released(e);
+ 		}
+ 	}
+
+	/*private class Listener extends KeyAdapter{
 		public void keyPressed(KeyEvent e){
 			int temp = e.getKeyCode();
 			if ((37<=temp) && (temp<=40))
@@ -193,5 +196,5 @@ public class Client extends JPanel{
 		public void keyReleased(KeyEvent e){
 			what = "";
 		}
-	}
+	}*/
 }

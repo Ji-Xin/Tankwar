@@ -15,7 +15,7 @@ public class Game{
 
 	ArrayList<Tank> cTanks;
 	ArrayList<EnemyTank> enemies;
-	ArrayList<Bullet> myBullets;
+	ArrayList<Bullet> cBullets;
 	ArrayList<Bullet> enemyBullets;
 	ArrayList<Wall> walls;
 
@@ -32,15 +32,15 @@ public class Game{
 
 		cTanks = new ArrayList<Tank>();
 		enemies = new ArrayList<EnemyTank>();
-		myBullets = new ArrayList<Bullet>();
+		cBullets = new ArrayList<Bullet>();
 		enemyBullets = new ArrayList<Bullet>();
 		walls = new ArrayList<Wall>();
 
 		for (int i=0; i<10; i++)
 			walls.add(new Wall(150+30*i, 500));
 
-		for (int i=0; i<3; i++)
-			enemies.add(new EnemyTank(500, i*60+50, 0, this));
+		/*for (int i=0; i<3; i++)
+			enemies.add(new EnemyTank(500, i*60+50, 0, this));*/
 
 		init();
 
@@ -108,20 +108,9 @@ public class Game{
 						DataOutputStream dos = senders.get(i);
 
 						//"my"Tank
-						dos.writeBytes(String.valueOf(cTanks.get(i).x)+"\n");
-						dos.writeBytes(String.valueOf(cTanks.get(i).y)+"\n");
-						dos.writeBytes(String.valueOf(cTanks.get(i).dir)+"\n");
-
-						String what = br.readLine();
-						if (what.length()==0)
-							cTanks.get(i).moving = false;
-						else if (what.length()>=1)
-						{
-							cTanks.get(i).moving = true;
-							cTanks.get(i).dir = Integer.parseInt(what.substring(0,1));
-							if (what.length()==2)
-								cTanks.get(i).fire();
-						}
+						cTanks.get(i).x = Integer.parseInt(br.readLine());
+						cTanks.get(i).y = Integer.parseInt(br.readLine());
+						cTanks.get(i).dir = Integer.parseInt(br.readLine());
 
 						//enemyTanks
 						for (i=0; i<enemies.size(); i++)
