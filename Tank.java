@@ -10,7 +10,7 @@ public class Tank{
 	int dir; //direction{left37, up38, right39, down40}
 	boolean mine; //true for myTank and friendTank, false for enemyTank
 	public boolean friend;
-	public static final int size=30, gun_size=6, speed=3;
+	public static final int size=30, gun_size=6, speed=1;
 	Color army_green = new Color(77, 153, 0);
 	Color dark_green = new Color(102, 51, 0);
 	boolean moving;
@@ -64,30 +64,38 @@ public class Tank{
 	}
 
 	public void pressed(KeyEvent e){
-		int key = e.getKeyCode();
-		switch(key)
-		{
-			case 37:
-				dir = 0;
-				moving = true;
-				break;
-			case 38:
-				dir = 1;
-				moving = true;
-				break;
-			case 39:
-				dir = 2;
-				moving = true;
-				break;
-			case 40:
-				dir = 3;
-				moving = true;
-				break;
+		try{
+			parent.sender.writeBytes("$myTankMotion\n");
+			int key = e.getKeyCode();
+			boolean flag = true;
+			switch(key)
+			{
+				case 37:
+					dir = 0;
+					moving = true;
+					break;
+				case 38:
+					dir = 1;
+					moving = true;
+					break;
+				case 39:
+					dir = 2;
+					moving = true;
+					break;
+				case 40:
+					dir = 3;
+					moving = true;
+					break;
 
-			case 32://fire
-				fire();
-				break;
-		}
+				case 32://fire
+					fire();
+					flag = false;
+					break;
+			}
+
+			if (flag)
+				parent.sender.writeBytes(dir+"\n");
+		} catch(Exception ex){}
 	}
 
 	public void fire(){
@@ -122,7 +130,10 @@ public class Tank{
 					break;
 			}
 			if (mine)
+			{
+				parent.newBullet = bul;
 				parent.myBullets.add(bul);
+			}
 			else
 				parent.enemyBullets.add(bul);
 			(new FireWait()).start();
@@ -138,9 +149,14 @@ public class Tank{
 	}
 
 	public void released(KeyEvent e){
-		int key = e.getKeyCode();
-		if (37<=key && key<=40)
-			moving = false;
+		try{
+			int key = e.getKeyCode();
+			if (37<=key && key<=40)
+			{
+				parent.sender.writeBytes("$myTankStop\n");
+				moving = false;
+			}
+		} catch(Exception ex){}
 	}
 
 	public void move(){

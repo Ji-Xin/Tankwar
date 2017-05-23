@@ -6,27 +6,34 @@ import javax.swing.*;
 import java.util.*;
 import java.lang.*;
 import java.net.*;
+import java.io.*;
 
 public class Game extends JPanel{
 	JFrame frame;
 	public static final int width=800, height=600;
+	public static final int delay=10;
 	Color bground;
 	Tank myTank, fTank; //friendTank
 	Motion mo;
 	Hit hi;
 	ArrayList<Bullet> myBullets; //including friend bullets
 	ArrayList<Bullet> enemyBullets;
-	ArrayList<EnemyTank> enemies;
+	public ArrayList<EnemyTank> enemies;
 	ArrayList<Wall> walls;
+	public Bullet newBullet;
 
 
-	public Game(){
+	BufferedReader receiver;
+	DataOutputStream sender;
+	Chat ch;
+
+
+	public Game(String title){
 		bground = Color.black;
 
-		frame = new JFrame("Tank War!");
+		frame = new JFrame(title);
 		frame.setContentPane(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setLocation(500, 50);
 		frame.setSize(width, height);
 		frame.setResizable(false);
 		frame.setVisible(true);
@@ -37,19 +44,41 @@ public class Game extends JPanel{
 		enemyBullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<EnemyTank>();
 		walls = new ArrayList<Wall>();
+		newBullet = null;
 
 		for (int i=0; i<10; i++)
 			walls.add(new Wall(150+30*i, 500, this));
 
-		enemies.add(new EnemyTank(500, 200, 0, this));
-		enemies.add(new EnemyTank(500, 300, 0, this));
-		enemies.add(new EnemyTank(500, 400, 0, this));
-		enemies.add(new EnemyTank(500, 500, 0, this));
-
-
 		hi = new Hit();
 		mo = new Motion();
+		ch = new Chat();
 	}
+
+
+	public class Chat extends Thread{
+		public void run(){
+			try{
+				while (true)
+				{
+
+					String s = receiver.readLine();
+
+					if (s.equals("$myTankMotion"))
+					{
+						String temp = receiver.readLine();
+						fTank.dir = Integer.parseInt(temp);
+						fTank.moving = true;
+					}
+
+					if (s.equals("$myTankStop"))
+						fTank.moving = false;
+
+
+				}
+			} catch(Exception e){}
+		}
+	}
+
 
 	public void paint(Graphics g){
 		try{
@@ -98,19 +127,20 @@ public class Game extends JPanel{
 				fTank.draw(g);
 				fTank.move();
 			}
-		} catch(Exception e) {System.err.println(e);}
+		} catch(Exception e) {}
 	}
 
-	public static void main(String [] args) throws Exception{
+	/*public static void main(String [] args) throws Exception{
 		Game game = new Game();
-	}
+	}*/
 
 	public class Motion extends Thread{
 		public void run(){
 			while (true)
 			{
 				repaint();
-				try{Thread.sleep(50);}catch(Exception e){}
+				//System.out.println(myTank.moving+"\t"+fTank.moving);
+				try{Thread.sleep(delay);}catch(Exception e){}
 			}
 		}
 	}
@@ -132,6 +162,7 @@ public class Game extends JPanel{
 			while (true)
 			{
 				try{
+
 					//myBullets and enemyTanks
 					for (int i=0; i<myBullets.size(); i++)
 						for (int j=0; j<enemies.size(); j++)
@@ -166,8 +197,10 @@ public class Game extends JPanel{
 					//myTank and walls
 					myTank.colliding = false;
 					for (int i=0; i<walls.size(); i++)
+					{
 						if (collide(myTank, walls.get(i)))
 							myTank.colliding = true;
+					}
 
 					//enemyTank and walls
 					for (int i=0; i<enemies.size(); i++)
@@ -189,7 +222,7 @@ public class Game extends JPanel{
 								enemies.remove(i);
 							}
 
-					Thread.sleep(50);
+					Thread.sleep(delay);
 				}catch(Exception e){}
 			}
 		}		

@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Bullet{
 	int x,y;
-	static int speed=10;
+	static int speed=2;
 	int dir;
 	boolean mine;
 

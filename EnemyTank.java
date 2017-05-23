@@ -6,25 +6,34 @@ import javax.swing.*;
 import java.util.*;
 
 public class EnemyTank extends Tank{
+	boolean auto;
+	public Auto auto_thread;
+	Game parent;
 
-	public EnemyTank(int xx, int yy, int d, Game p){
+	public EnemyTank(int xx, int yy, int d, Game p, boolean a){
 		super(xx, yy, d, p);
 		mine = false;
-		(new Auto()).start();
+		auto = a;
+		parent = p;
+		auto_thread = new Auto();
 	}
 
-	private class Auto extends Thread{
+	public class Auto extends Thread{
 		public void run(){
-			Random rand = new Random();
-			try{Thread.sleep(rand.nextInt(400));}catch(Exception e){}
-			while (alive)
-			{
-				dir = rand.nextInt(4);
-				moving = true;
+			try{
 
-				fire();
-				try{Thread.sleep(1000);}catch(Exception e){}
-			}
+				Random rand = new Random();
+				while (alive)
+				{
+					if (auto)
+						dir = rand.nextInt(4);
+					moving = true;
+
+					Thread.sleep(500);
+					fire();
+					Thread.sleep(500);
+				}
+			} catch(Exception e){}
 		}
 	}
 }
