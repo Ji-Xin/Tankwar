@@ -16,6 +16,7 @@ public class Tank{
 	Color army_green = new Color(77, 153, 0);
 	Color dark_green = new Color(102, 51, 0);
 	boolean alive;
+	int health;
 	int colliding; // which directions is blocked, -1 for not blocked
 	Game parent;
 	boolean fire_ready;
@@ -113,25 +114,25 @@ public class Tank{
 					bul = new Bullet(
 						x-Tank.size/2,
 						y+Tank.size/2-Tank.gun_size/2,
-						dir, mine);
+						dir, mine, true);
 					break;
 				case 1:
 					bul = new Bullet(
 						x+Tank.size/2-Tank.gun_size/2,
 						y-Tank.size/2,
-						dir, mine);
+						dir, mine, true);
 					break;
 				case 2:
 					bul = new Bullet(
 						x+Tank.size*3/2,
 						y+Tank.size/2-Tank.gun_size/2,
-						dir, mine);
+						dir, mine, true);
 					break;
 				case 3:
 					bul = new Bullet(
 						x+Tank.size/2-Tank.gun_size/2,
 						y+Tank.size*3/2,
-						dir, mine);
+						dir, mine, true);
 					break;
 			}
 			if (mine)

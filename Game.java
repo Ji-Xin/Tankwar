@@ -10,7 +10,7 @@ import java.io.*;
 
 public class Game extends JPanel{
 	JFrame frame;
-	public static final int width=800, height=600;
+	public static final int width=800, height=600, extra_width=200;
 	public static final int delay=50;
 	Color bground;
 	Tank myTank, fTank; //friendTank
@@ -21,6 +21,7 @@ public class Game extends JPanel{
 	public ArrayList<EnemyTank> enemies;
 	ArrayList<Wall> walls;
 	boolean isServer;
+	int myPoint, fPoint;
 
 
 	BufferedReader receiver;
@@ -42,6 +43,8 @@ public class Game extends JPanel{
 		enemyBullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<EnemyTank>();
 		walls = new ArrayList<Wall>();
+		myPoint = 0;
+		fPoint = 0;
 
 		for (int i=0; i<10; i++)
 			walls.add(new Wall(150+30*i, 500, this));
@@ -73,7 +76,7 @@ public class Game extends JPanel{
 						String temp = receiver.readLine();
 						String [] arr = temp.split(",");
 						Bullet bul = new Bullet(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]),
-							Integer.parseInt(arr[2]), Boolean.parseBoolean(arr[3]));
+							Integer.parseInt(arr[2]), Boolean.parseBoolean(arr[3]), false);
 						if (arr[3].equals("true"))
 							myBullets.add(bul);
 						else
@@ -98,12 +101,20 @@ public class Game extends JPanel{
 		}
 	}
 
+	public void info(Graphics g){
+		g.setColor(Color.white);
+		g.fillRect(width, 0, extra_width, height);
+		g.setColor(Color.black);
+		g.setFont(new Font("Sans", Font.BOLD, 16));
+		g.drawString("My points: "+myPoint, width+extra_width/4, 50);
+		g.drawString("Friend points: "+fPoint, width+extra_width/6, 70);
+	}
+
 
 	public void paint(Graphics g){
 		try{
 			g.setColor(bground);
 			g.fillRect(0, 0, width, height);
-
 
 			for (int i=0; i<myBullets.size(); i++)
 			{
@@ -144,6 +155,9 @@ public class Game extends JPanel{
 				myTank.draw(g);
 			}
 
+
+			info(g);
+
 		} catch(Exception e) {System.err.println("[E]\t"+e);}
 	}
 
@@ -180,6 +194,10 @@ public class Game extends JPanel{
 						for (int j=0; j<enemies.size(); j++)
 							if (collide(myBullets.get(i), enemies.get(j)))
 							{
+								if (myBullets.get(i).byMe)
+									myPoint++;
+								else
+									fPoint++;
 								enemies.get(j).alive = false;
 								enemies.remove(j);
 								myBullets.remove(i);

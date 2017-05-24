@@ -11,12 +11,14 @@ public class Bullet{
 	static int speed=10;
 	int dir;
 	boolean mine;
+	boolean byMe;
 
-	public Bullet(int xx, int yy, int d, boolean m){
+	public Bullet(int xx, int yy, int d, boolean m, boolean b){
 		x = xx;
 		y = yy;
 		dir = d;
 		mine = m;
+		byMe = b;
 	}
 
 	public void draw(Graphics g){
