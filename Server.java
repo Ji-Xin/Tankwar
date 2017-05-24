@@ -31,12 +31,15 @@ public class Server extends Game{
 	public Server() throws Exception{
 		super("Tank War Server");
 		isServer = true;
+		frame.setSize(width, height);
 		frame.setLocation(30, 700);
 
 		myTank = new Tank(100, 500, 1, this);
 
-		for (int i=0; i<3; i++)
+		for (int i=0; i<8; i++)
 			enemies.add(new EnemyTank(500, 50+60*i, 0, this, true));
+
+		frame.setVisible(true);
 
 		server = new ServerSocket(serverPort);
 		Socket client = server.accept();
@@ -73,6 +76,8 @@ public class Server extends Game{
 		ch.start();
 		hi.start();
 		mo.start();
+
+
 	}
 	
 

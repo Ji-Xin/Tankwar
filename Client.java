@@ -16,9 +16,13 @@ public class Client extends Game{
 		super("Tank War Client");
 		isServer = false;
 
+		frame.setSize(width, height);
 		frame.setLocation(1000, 700);
 
 		myTank = new Tank(100, 400, 1, this);
+
+		
+		frame.setVisible(true);
 
 		String sIP = "127.0.0.1";
 		me = new Socket(sIP, Server.serverPort);
