@@ -15,9 +15,8 @@ public class Tank{
 	public static final int size=30, gun_size=6, speed=3;
 	Color army_green = new Color(77, 153, 0);
 	Color dark_green = new Color(102, 51, 0);
-	boolean moving;
 	boolean alive;
-	boolean colliding;//with walls or other tanks
+	int colliding; // which directions is blocked, -1 for not blocked
 	Game parent;
 	boolean fire_ready;
 
@@ -30,9 +29,9 @@ public class Tank{
 		old_dir = -1;
 		first_collide = false;
 		parent = p;
-		moving = false;
 		alive = true;
 		fire_ready = true;
+		colliding = -1;
 	}
 
 	public void draw(Graphics g){
@@ -70,34 +69,31 @@ public class Tank{
 	public void pressed(KeyEvent e){
 		try{
 			int key = e.getKeyCode();
-			boolean flag = true;
+			boolean flag_move = true;
 			switch(key)
 			{
 				case 37:
 					dir = 0;
-					moving = true;
 					break;
 				case 38:
 					dir = 1;
-					moving = true;
 					break;
 				case 39:
 					dir = 2;
-					moving = true;
 					break;
 				case 40:
 					dir = 3;
-					moving = true;
 					break;
 
 				case 32://fire
 					fire();
-					flag = false;
+					flag_move = false;
 					break;
 			}
 
-			if (flag)
+			if (flag_move)
 			{
+				move();
 				synchronized(parent.sender)
 				{
 					parent.sender.writeBytes("$myTankMotion\n");
@@ -169,13 +165,13 @@ public class Tank{
 				synchronized(parent.sender)
 				{
 					parent.sender.writeBytes("$myTankStop\n");
-					moving = false;
+					//moving = false;
 				}
 		} catch(Exception ex){System.err.println("[E]\t"+ex);}
 	}
 
 	public void move(){
-		if (moving && !this.out() && !colliding)//prevent it goes out or into the wall
+		if (colliding!=dir && this.out()==-1)//prevent it goes out or into the wall
 			switch(dir)
 			{
 				case 0:
@@ -193,13 +189,13 @@ public class Tank{
 			}
 	}
 
-	public boolean out(){
+	public int out(){
 		if ((x<0 && dir==0) ||
 			(x>Game.width-Tank.size && dir==2) ||
 			(y<0 && dir==1) ||
 			(y>Game.height-Tank.size && dir==3))//prevent it gets stuck in walls
-			return true;
+			return dir;
 
-		return false;
+		return -1;
 	}
 }

@@ -17,7 +17,7 @@ What to communicate?
 
 1 mutual
 @	1.1 myTank new information: {dir,moving}
-	1.2 myBullet generation (only generate, no need to communicate after generated)
+@	1.2 myBullet generation (only generate, no need to communicate after generated)
 
 2 server to client only
 @	2.1 new dir of enemyTanks (client do the enemyBullet generation itself)

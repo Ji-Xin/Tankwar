@@ -41,7 +41,6 @@ public class EnemyTank extends Tank{
 								parent.enemies.indexOf(parentEnemyTank)+","+dir+"\n");
 						}
 					}
-					moving = true;
 
 
 					Thread.sleep(500);
