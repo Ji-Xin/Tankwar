@@ -61,7 +61,7 @@ public class Game extends JPanel{
 				{
 
 					String s = receiver.readLine();
-					System.out.println(s);
+					//System.out.println(s);
 
 					if (s.equals("$myTankMotion"))
 					{
@@ -90,14 +90,18 @@ public class Game extends JPanel{
 					if (s.equals("$enemyMotion"))
 					{
 						String temp = receiver.readLine();
-						System.out.println(temp);
 						String [] arr = temp.split(",");
 						enemies.get(Integer.parseInt(arr[0])).dir = Integer.parseInt(arr[1]);
 					}
 
+					if (s.equals("$tankDead"))
+					{
+						fTank.alive = false;
+					}
+
 
 				}
-			} catch(Exception e){System.err.println(e);}
+			} catch(Exception e){System.err.println("[E]\t"+e);}
 		}
 	}
 
@@ -149,20 +153,15 @@ public class Game extends JPanel{
 				fTank.draw(g);
 				fTank.move();
 			}
-		} catch(Exception e) {}
+		} catch(Exception e) {System.err.println("[E]\t"+e);}
 	}
-
-	/*public static void main(String [] args) throws Exception{
-		Game game = new Game();
-	}*/
 
 	public class Motion extends Thread{
 		public void run(){
 			while (true)
 			{
 				repaint();
-				//System.out.println(myTank.moving+"\t"+fTank.moving);
-				try{Thread.sleep(delay);}catch(Exception e){}
+				try{Thread.sleep(delay);}catch(Exception e){System.err.println("[E]\t"+e);}
 			}
 		}
 	}
@@ -184,7 +183,7 @@ public class Game extends JPanel{
 			while (true)
 			{
 				try{
-
+					//{myTank, fTank, enemies, myBullets, enemyBullets, walls}
 					//myBullets and enemyTanks
 					for (int i=0; i<myBullets.size(); i++)
 						for (int j=0; j<enemies.size(); j++)
@@ -202,6 +201,10 @@ public class Game extends JPanel{
 						{
 							myTank.alive = false;
 							enemyBullets.remove(i);
+							synchronized(sender)
+							{
+								sender.writeBytes("$tankDead\n");
+							}
 						}
 
 					//myBullets and walls
@@ -216,12 +219,18 @@ public class Game extends JPanel{
 							if (collide(enemyBullets.get(i), walls.get(j)))
 								enemyBullets.remove(i);
 
-					//myTank and walls
+					//{myTank, fTank} and walls
 					myTank.colliding = false;
 					for (int i=0; i<walls.size(); i++)
 					{
 						if (collide(myTank, walls.get(i)))
 							myTank.colliding = true;
+					}
+					fTank.colliding = false;
+					for (int i=0; i<walls.size(); i++)
+					{
+						if (collide(fTank, walls.get(i)))
+							fTank.colliding = true;
 					}
 
 					//enemyTank and walls
@@ -234,7 +243,7 @@ public class Game extends JPanel{
 								eT.colliding = true;
 					}
 
-					//myTank and enemyTank
+					//{myTank, fTank} and enemyTank
 					if (myTank.alive)
 						for (int i=0; i<enemies.size(); i++)
 							if (collide(myTank, enemies.get(i)))
@@ -243,9 +252,24 @@ public class Game extends JPanel{
 								enemies.get(i).alive = false;
 								enemies.remove(i);
 							}
+					if (fTank.alive)
+						for (int i=0; i<enemies.size(); i++)
+							if (collide(fTank, enemies.get(i)))
+							{
+								fTank.alive = false;
+								enemies.get(i).alive = false;
+								enemies.remove(i);
+							}
+
+					//myTank and fTank
+					myTank.colliding = false;
+					if (myTank.alive && fTank.alive && collide(myTank, fTank))
+					{
+						myTank.colliding = true;
+					}
 
 					Thread.sleep(delay);
-				}catch(Exception e){}
+				}catch(Exception e){System.err.println("[E]\t"+e);}
 			}
 		}		
 	}

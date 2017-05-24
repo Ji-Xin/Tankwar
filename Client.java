@@ -18,7 +18,7 @@ public class Client extends Game{
 
 		frame.setLocation(1000, 700);
 
-		myTank = new Tank(100, 300, 1, this);
+		myTank = new Tank(100, 400, 1, this);
 
 		String sIP = "127.0.0.1";
 		me = new Socket(sIP, Server.serverPort);
@@ -45,8 +45,9 @@ public class Client extends Game{
 			dd = Integer.parseInt(receiver.readLine());
 			EnemyTank temp = new EnemyTank(xx, yy, dd, this, false);
 			enemies.add(temp);
-			temp.auto_thread.start();
 		}
+		for (int i=0; i<enemy_count; i++)
+			enemies.get(i).auto_thread.start();
 
 
 		ch.start();

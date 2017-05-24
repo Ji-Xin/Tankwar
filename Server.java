@@ -35,7 +35,7 @@ public class Server extends Game{
 
 		myTank = new Tank(100, 500, 1, this);
 
-		for (int i=0; i<1; i++)
+		for (int i=0; i<3; i++)
 			enemies.add(new EnemyTank(500, 50+60*i, 0, this, true));
 
 		server = new ServerSocket(serverPort);
@@ -64,7 +64,10 @@ public class Server extends Game{
 			sender.writeBytes(temp.x+"\n");
 			sender.writeBytes(temp.y+"\n");
 			sender.writeBytes(temp.dir+"\n");
-			temp.auto_thread.start();
+		}
+		for (int i=0; i<enemies.size(); i++)
+		{
+			enemies.get(i).auto_thread.start();
 		}
 
 		ch.start();

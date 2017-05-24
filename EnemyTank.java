@@ -34,14 +34,19 @@ public class EnemyTank extends Tank{
 					if (auto)
 					{
 						dir = rand.nextInt(4);
-						parent.sender.writeBytes("$enemyMotion\n");
-						parent.sender.writeBytes(parent.enemies.indexOf(parentEnemyTank)+","+dir+"\n");
+						synchronized(parentEnemyTank.parent.sender)
+						{
+							parent.sender.writeBytes("$enemyMotion\n");
+							parent.sender.writeBytes(
+								parent.enemies.indexOf(parentEnemyTank)+","+dir+"\n");
+						}
 					}
 					moving = true;
 
 
 					Thread.sleep(500);
-					fire();
+					if (auto)
+						fire();
 					Thread.sleep(500);
 				}
 			} catch(Exception e){System.err.println(e);}

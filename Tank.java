@@ -93,11 +93,12 @@ public class Tank{
 			}
 
 			if (flag)
-			{
-				parent.sender.writeBytes("$myTankMotion\n");
-				parent.sender.writeBytes(dir+"\n");
-			}
-		} catch(Exception ex){}
+				synchronized(parent.sender)
+				{
+					parent.sender.writeBytes("$myTankMotion\n");
+					parent.sender.writeBytes(dir+"\n");
+				}
+		} catch(Exception ex){System.err.println("[E]\t"+ex);}
 	}
 
 	public void fire(){
@@ -136,10 +137,13 @@ public class Tank{
 			else
 				parent.enemyBullets.add(bul);
 			if (parent.isServer || mine)
-				try{
-					parent.sender.writeBytes("$fire\n");
-					parent.sender.writeBytes(bul.x+","+bul.y+","+bul.dir+","+bul.mine+"\n");
-				} catch(Exception ex){}
+				synchronized(parent.sender)
+				{
+					try{
+						parent.sender.writeBytes("$fire\n");
+						parent.sender.writeBytes(bul.x+","+bul.y+","+bul.dir+","+bul.mine+"\n");
+					} catch(Exception ex){System.err.println("[E]\t"+ex);}
+				}
 			(new FireWait()).start();
 		}
 	}
@@ -147,7 +151,7 @@ public class Tank{
 	private class FireWait extends Thread{
 		public void run(){
 			fire_ready = false;
-			try{Thread.sleep(700);}catch(Exception e){}
+			try{Thread.sleep(700);}catch(Exception e){System.err.println("[E]\t"+e);}
 			fire_ready = true;
 		}
 	}
@@ -156,11 +160,12 @@ public class Tank{
 		try{
 			int key = e.getKeyCode();
 			if (37<=key && key<=40)
-			{
-				parent.sender.writeBytes("$myTankStop\n");
-				moving = false;
-			}
-		} catch(Exception ex){}
+				synchronized(parent.sender)
+				{
+					parent.sender.writeBytes("$myTankStop\n");
+					moving = false;
+				}
+		} catch(Exception ex){System.err.println("[E]\t"+ex);}
 	}
 
 	public void move(){
