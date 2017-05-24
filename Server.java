@@ -30,7 +30,8 @@ public class Server extends Game{
 
 	public Server() throws Exception{
 		super("Tank War Server");
-		frame.setLocation(10, 100);
+		isServer = true;
+		frame.setLocation(30, 700);
 
 		myTank = new Tank(100, 500, 1, this);
 

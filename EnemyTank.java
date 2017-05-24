@@ -13,12 +13,18 @@ public class EnemyTank extends Tank{
 	public EnemyTank(int xx, int yy, int d, Game p, boolean a){
 		super(xx, yy, d, p);
 		mine = false;
-		auto = a;
+		auto = a; //true for server, false for client
 		parent = p;
-		auto_thread = new Auto();
+		auto_thread = new Auto(this);
 	}
 
 	public class Auto extends Thread{
+		EnemyTank parentEnemyTank;
+
+		public Auto(EnemyTank p){
+			parentEnemyTank = p;
+		}
+
 		public void run(){
 			try{
 
@@ -26,14 +32,19 @@ public class EnemyTank extends Tank{
 				while (alive)
 				{
 					if (auto)
+					{
 						dir = rand.nextInt(4);
+						parent.sender.writeBytes("$enemyMotion\n");
+						parent.sender.writeBytes(parent.enemies.indexOf(parentEnemyTank)+","+dir+"\n");
+					}
 					moving = true;
+
 
 					Thread.sleep(500);
 					fire();
 					Thread.sleep(500);
 				}
-			} catch(Exception e){}
+			} catch(Exception e){System.err.println(e);}
 		}
 	}
 }

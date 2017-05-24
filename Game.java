@@ -11,7 +11,7 @@ import java.io.*;
 public class Game extends JPanel{
 	JFrame frame;
 	public static final int width=800, height=600;
-	public static final int delay=10;
+	public static final int delay=50;
 	Color bground;
 	Tank myTank, fTank; //friendTank
 	Motion mo;
@@ -20,7 +20,7 @@ public class Game extends JPanel{
 	ArrayList<Bullet> enemyBullets;
 	public ArrayList<EnemyTank> enemies;
 	ArrayList<Wall> walls;
-	public Bullet newBullet;
+	boolean isServer;
 
 
 	BufferedReader receiver;
@@ -44,7 +44,6 @@ public class Game extends JPanel{
 		enemyBullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<EnemyTank>();
 		walls = new ArrayList<Wall>();
-		newBullet = null;
 
 		for (int i=0; i<10; i++)
 			walls.add(new Wall(150+30*i, 500, this));
@@ -62,6 +61,7 @@ public class Game extends JPanel{
 				{
 
 					String s = receiver.readLine();
+					System.out.println(s);
 
 					if (s.equals("$myTankMotion"))
 					{
@@ -71,11 +71,33 @@ public class Game extends JPanel{
 					}
 
 					if (s.equals("$myTankStop"))
+					{
 						fTank.moving = false;
+					}
+
+					if (s.equals("$fire"))
+					{
+						String temp = receiver.readLine();
+						String [] arr = temp.split(",");
+						Bullet bul = new Bullet(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]),
+							Integer.parseInt(arr[2]), Boolean.parseBoolean(arr[3]));
+						if (arr[3].equals("true"))
+							myBullets.add(bul);
+						else
+							enemyBullets.add(bul);
+					}
+
+					if (s.equals("$enemyMotion"))
+					{
+						String temp = receiver.readLine();
+						System.out.println(temp);
+						String [] arr = temp.split(",");
+						enemies.get(Integer.parseInt(arr[0])).dir = Integer.parseInt(arr[1]);
+					}
 
 
 				}
-			} catch(Exception e){}
+			} catch(Exception e){System.err.println(e);}
 		}
 	}
 

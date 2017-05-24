@@ -14,7 +14,9 @@ public class Client extends Game{
 
 	public Client() throws Exception{
 		super("Tank War Client");
-		frame.setLocation(600, 100);
+		isServer = false;
+
+		frame.setLocation(1000, 700);
 
 		myTank = new Tank(100, 300, 1, this);
 
@@ -41,7 +43,9 @@ public class Client extends Game{
 			xx = Integer.parseInt(receiver.readLine());
 			yy = Integer.parseInt(receiver.readLine());
 			dd = Integer.parseInt(receiver.readLine());
-			enemies.add(new EnemyTank(xx, yy, dd, this, false));
+			EnemyTank temp = new EnemyTank(xx, yy, dd, this, false);
+			enemies.add(temp);
+			temp.auto_thread.start();
 		}
 
 
