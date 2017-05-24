@@ -99,6 +99,16 @@ public class Game extends JPanel{
 						fTank.alive = false;
 					}
 
+					/*if (s.equals("$myTankCollide"))
+					{
+						fTank.colliding = true;
+					}
+
+					if (s.equals("$myTankNotCollide"))
+					{
+						fTank.colliding = false;
+					}*/
+
 
 				}
 			} catch(Exception e){System.err.println("[E]\t"+e);}
@@ -116,7 +126,7 @@ public class Game extends JPanel{
 			if (myTank.alive)
 			{
 				myTank.draw(g);
-				myTank.move();
+				//myTank.move();
 			}
 
 			for (int i=0; i<enemies.size(); i++)
@@ -161,6 +171,7 @@ public class Game extends JPanel{
 			while (true)
 			{
 				repaint();
+				System.out.println(myTank.colliding);
 				try{Thread.sleep(delay);}catch(Exception e){System.err.println("[E]\t"+e);}
 			}
 		}
@@ -262,14 +273,16 @@ public class Game extends JPanel{
 							}
 
 					//myTank and fTank
-					myTank.colliding = false;
 					if (myTank.alive && fTank.alive && collide(myTank, fTank))
 					{
 						myTank.colliding = true;
+
+						
 					}
 
+
 					Thread.sleep(delay);
-				}catch(Exception e){System.err.println("[E]\t"+e);}
+				} catch(Exception e){System.err.println("[E]\t"+e);}
 			}
 		}		
 	}
@@ -302,7 +315,7 @@ public class Game extends JPanel{
 	}
 
 	public boolean collide(Tank t, Tank e){
-		if (Math.abs(t.x-e.x)<Tank.size && Math.abs(t.y-e.y)<Tank.size)
+		if (Math.abs(t.x-e.x)<=Tank.size && Math.abs(t.y-e.y)<=Tank.size)
 			return true;
 		return false;
 	}
