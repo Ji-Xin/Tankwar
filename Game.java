@@ -51,18 +51,23 @@ public class Game extends JPanel{
 
 		hi = new Hit();
 		mo = new Motion();
-		ch = new Chat();
+		ch = new Chat(this);
 	}
 
 
 	public class Chat extends Thread{
+		Game parent;
+
+		public Chat(Game p){
+			parent = p;
+		}
+
 		public void run(){
 			try{
 				while (true)
 				{
 
 					String s = receiver.readLine();
-					//System.out.println(s);
 
 					if (s.equals("$myTankMotion"))
 					{
@@ -95,9 +100,56 @@ public class Game extends JPanel{
 						fTank.alive = false;
 					}
 
+					if (s.equals("$sync")) //only received by client
+					{
+						//fTank
+						String temp = receiver.readLine();
+						String [] arr = temp.split(",");
+						fTank.x = Integer.parseInt(arr[0]);
+						fTank.y = Integer.parseInt(arr[1]);
+						fTank.dir = Integer.parseInt(arr[2]);
+
+						//enemies
+						int e_count = Integer.parseInt(receiver.readLine());
+						System.out.println(e_count==enemies.size());
+						if (e_count==enemies.size())
+						{
+							for (int i=0; i<e_count; i++)
+							{
+								EnemyTank etemp = enemies.get(i);
+								String st = receiver.readLine();
+								String [] arrt = st.split(",");
+								etemp.x = Integer.parseInt(arrt[0]);
+								etemp.y = Integer.parseInt(arrt[1]);
+								etemp.dir = Integer.parseInt(arrt[2]);
+							}
+						}
+						else
+						{
+							enemies.clear();
+							for (int i=0; i<e_count; i++)
+							{
+								String st = receiver.readLine();
+								String [] arrt = st.split(",");
+								enemies.add(new EnemyTank(Integer.parseInt(arrt[0]),
+									Integer.parseInt(arrt[1]), Integer.parseInt(arrt[2]),
+									parent, false));
+							}
+						for (int i=0; i<e_count; i++)
+							enemies.get(i).auto_thread.start();
+
+						// returns myTank of client
+						/*synchronized(sender)
+						{
+							sender.writeBytes(myTank.x+","+myTank.y+","+myTank.dir+"\n");
+						}*/
+
+						}
+					}
+
 
 				}
-			} catch(Exception e){System.err.println("[E]\t"+e);}
+			} catch(Exception ex){ex.printStackTrace();}
 		}
 	}
 

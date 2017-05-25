@@ -8,7 +8,6 @@ import java.util.*;
 public class Tank{
 	int x,y; //position
 	int dir; //direction{left37, up38, right39, down40}
-	public int old_dir;
 	public boolean first_collide;
 	boolean mine; //true for myTank and friendTank, false for enemyTank
 	public boolean friend;
@@ -27,7 +26,6 @@ public class Tank{
 		x = xx;
 		y = yy;
 		dir = d;
-		old_dir = -1;
 		first_collide = false;
 		parent = p;
 		alive = true;

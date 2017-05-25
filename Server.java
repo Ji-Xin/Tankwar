@@ -26,6 +26,7 @@ What to communicate?
 public class Server extends Game{
 	ServerSocket server;
 	static final int serverPort = 2288;
+	Sync sy;
 
 
 	public Server() throws Exception{
@@ -76,6 +77,8 @@ public class Server extends Game{
 		ch.start();
 		hi.start();
 		mo.start();
+		sy = new Sync();
+		sy.start();
 
 
 	}
@@ -83,6 +86,39 @@ public class Server extends Game{
 
 	public static void main(String [] args) throws Exception{
 		Server s = new Server();
+	}
+
+
+	public class Sync extends Thread{
+		public void run(){
+			while (true)
+				try{
+					synchronized(sender)
+					{
+						sender.writeBytes("$sync\n");
+
+						// myTank
+						sender.writeBytes(myTank.x+","+myTank.y+","+myTank.dir+"\n");
+
+						// enemies
+						sender.writeBytes(enemies.size()+"\n");
+						for (int i=0; i<enemies.size(); i++)
+						{
+							EnemyTank temp = enemies.get(i);
+							sender.writeBytes(temp.x+","+temp.y+","+temp.dir+"\n");
+						}
+					}
+
+					/*// fTank
+					String temp = receiver.readLine();
+					String [] arr = temp.split(",");
+					fTank.x = Integer.parseInt(arr[0]);
+					fTank.y = Integer.parseInt(arr[1]);
+					fTank.dir = Integer.parseInt(arr[2]);*/
+					
+					Thread.sleep(2000);
+				} catch(Exception ex){ex.printStackTrace();}
+		}
 	}
 
 
