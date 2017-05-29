@@ -17,7 +17,7 @@ public class Client extends Game{
 		isServer = false;
 
 		frame.setSize(width+extra_width, height);
-		frame.setLocation(1200, 700);
+		frame.setLocation(1200, 50);
 
 		myTank = new Tank(100, 400, 1, this);
 

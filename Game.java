@@ -47,7 +47,8 @@ public class Game extends JPanel{
 		fPoint = 0;
 
 		for (int i=0; i<10; i++)
-			walls.add(new Wall(150+30*i, 500, this));
+			walls.add(new Wall(150+30*i, 500, this, false));
+		walls.add(new Wall(150, 550, this, true));
 
 		hi = new Hit();
 		mo = new Motion();

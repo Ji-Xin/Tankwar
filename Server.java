@@ -33,7 +33,7 @@ public class Server extends Game{
 		super("Tank War Server");
 		isServer = true;
 		frame.setSize(width+extra_width, height);
-		frame.setLocation(30, 700);
+		frame.setLocation(30, 50);
 
 		myTank = new Tank(100, 500, 1, this);
 
