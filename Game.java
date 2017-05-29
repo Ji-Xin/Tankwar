@@ -55,7 +55,7 @@ public class Game extends JPanel{
 		enemyBullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<EnemyTank>();
 		walls = new ArrayList<Wall>();
-		paused = false;
+		paused = true;
 		myPoint = 0;
 		fPoint = 0;
 
