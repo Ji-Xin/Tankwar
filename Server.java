@@ -37,10 +37,11 @@ public class Server extends Game{
 
 		myTank = new Tank(100, 500, 1, this);
 
-		for (int i=0; i<8; i++)
+		for (int i=0; i<1; i++)
 			enemies.add(new EnemyTank(500, 50+60*i, 0, this, true));
 
-		frame.setVisible(true);
+		System.out.println("Server starts.");
+
 
 		server = new ServerSocket(serverPort);
 		Socket client = server.accept();
@@ -80,7 +81,7 @@ public class Server extends Game{
 		sy = new Sync();
 		sy.start();
 
-
+		frame.setVisible(true);
 	}
 	
 
@@ -93,66 +94,25 @@ public class Server extends Game{
 		public void run(){
 			while (true)
 				try{
-					synchronized(sender)
-					{
-						sender.writeBytes("$sync\n");
-
-						// myTank
-						sender.writeBytes(myTank.x+","+myTank.y+","+myTank.dir+"\n");
-
-						// enemies
-						sender.writeBytes(enemies.size()+"\n");
-						for (int i=0; i<enemies.size(); i++)
+					if (!paused)
+						synchronized(sender)
 						{
-							EnemyTank temp = enemies.get(i);
-							sender.writeBytes(temp.x+","+temp.y+","+temp.dir+"\n");
-						}
-					}
+							sender.writeBytes("$sync\n");
 
-					/*// fTank
-					String temp = receiver.readLine();
-					String [] arr = temp.split(",");
-					fTank.x = Integer.parseInt(arr[0]);
-					fTank.y = Integer.parseInt(arr[1]);
-					fTank.dir = Integer.parseInt(arr[2]);*/
+							// myTank
+							sender.writeBytes(myTank.x+","+myTank.y+","+myTank.dir+"\n");
+
+							// enemies
+							sender.writeBytes(enemies.size()+"\n");
+							for (int i=0; i<enemies.size(); i++)
+							{
+								EnemyTank temp = enemies.get(i);
+								sender.writeBytes(temp.x+","+temp.y+","+temp.dir+"\n");
+							}
+						}
 					
 					Thread.sleep(2000);
-				} catch(Exception ex){ex.printStackTrace();}
+				} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 		}
 	}
-
-
-	/*public class Chat extends Thread{
-		public void run(){
-			while (true)
-			{
-				try{
-					if (hitting==true)
-						wait();
-
-
-					//1.1 myTank new information: {dir,moving}
-					sender.writeBytes(myTank.dir+"\n");
-					sender.writeBytes(myTank.moving+"\n");
-					fTank.dir = Integer.parseInt(receiver.readLine());
-					fTank.moving = Boolean.parseBoolean(receiver.readLine());
-
-
-					//1.2 myBullet generation (only generate, no need to communicate after generated)
-					
-
-
-					//2.1 new dir of enemyTanks (client do the enemyBullet generation itself)
-					
-					for (int i=0; i<enemies.size(); i++)
-						sender.writeBytes(enemies.get(i).dir+"\n");
-
-
-					hitting = true;
-					notify();
-					Thread.sleep(delay);
-				} catch(Exception e){}
-			}
-		}
-	}*/
 }

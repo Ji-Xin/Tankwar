@@ -10,7 +10,7 @@ import java.io.*;
 
 public class Game extends JPanel{
 	JFrame frame;
-	public static final int width=800, height=600, extra_width=200;
+	public static final int width=800, height=600, extra_width=200, extra_height=500;
 	public static final int delay=50;
 	Color bground;
 	Tank myTank, fTank; //friendTank
@@ -22,6 +22,10 @@ public class Game extends JPanel{
 	ArrayList<Wall> walls;
 	boolean isServer;
 	int myPoint, fPoint;
+	boolean paused;
+	JMenuBar bar;
+	JMenu menu;
+	JMenuItem item1, item2;
 
 
 	BufferedReader receiver;
@@ -39,20 +43,47 @@ public class Game extends JPanel{
 
 		frame.addKeyListener(new Listener());
 
+		bar = new JMenuBar();
+		menu = new JMenu("Game");
+		item1 = new JMenuItem("Start/Pause");
+		item1.addActionListener(new SPListener());
+		bar.add(menu);
+		menu.add(item1);
+		frame.setJMenuBar(bar);
+
 		myBullets = new ArrayList<Bullet>();
 		enemyBullets = new ArrayList<Bullet>();
 		enemies = new ArrayList<EnemyTank>();
 		walls = new ArrayList<Wall>();
+		paused = false;
 		myPoint = 0;
 		fPoint = 0;
 
-		walls.add(new Wall(150, 550, this, true));
+		walls.add(new Wall(150, 530, this, true));
 		for (int i=0; i<10; i++)
 			walls.add(new Wall(150+30*i, 500, this, false));
 
 		hi = new Hit();
 		mo = new Motion();
 		ch = new Chat(this);
+
+	}
+
+	public class SPListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			start_pause(true);
+		}
+	}
+
+	public void start_pause(boolean send){
+		try{
+			paused = !paused;
+			if (send)
+				synchronized(sender)
+				{
+					sender.writeBytes("$start_pause\n");
+				}
+		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 	}
 
 
@@ -112,7 +143,6 @@ public class Game extends JPanel{
 
 						//enemies
 						int e_count = Integer.parseInt(receiver.readLine());
-						System.out.println(e_count==enemies.size());
 						if (e_count==enemies.size())
 						{
 							for (int i=0; i<e_count; i++)
@@ -142,6 +172,11 @@ public class Game extends JPanel{
 						}
 					}
 
+					if (s.equals("$start_pause"))
+					{
+						start_pause(false);
+					}
+
 
 				}
 			} catch(Exception ex){ex.printStackTrace();System.exit(0);}
@@ -150,16 +185,17 @@ public class Game extends JPanel{
 
 	public void info(Graphics g){
 		g.setColor(Color.white);
-		g.fillRect(width, 0, extra_width, height);
+		g.fillRect(width, 0, extra_width, extra_height);
 		g.setColor(Color.black);
 		g.setFont(new Font("Sans", Font.BOLD, 16));
 		g.drawString("My points: "+myPoint, width+extra_width/4, 50);
 		g.drawString("Friend points: "+fPoint, width+extra_width/6, 70);
 		g.drawString("Base HP: "+walls.get(0).life, width+extra_width/4, 90);
+
 	}
 
 
-	public void paint(Graphics g){
+	public void paintComponent(Graphics g){
 		try{
 			g.setColor(bground);
 			g.fillRect(0, 0, width, height);
@@ -213,8 +249,11 @@ public class Game extends JPanel{
 		public void run(){
 			while (true)
 			{
-				repaint();
-				try{Thread.sleep(delay);}catch(Exception ex){ex.printStackTrace();System.exit(0);}
+				//System.out.println(paused);
+				if (!paused)
+					repaint();
+				try{Thread.sleep(delay);}
+						catch(Exception ex){ex.printStackTrace();System.exit(0);}
 			}
 		}
 	}
@@ -234,8 +273,26 @@ public class Game extends JPanel{
 	public class Hit extends Thread{
 		public void run(){
 			while (true)
-			{
 				try{
+				if (!paused)
+				{
+					// win or not
+					int flag = 0;
+					if (walls.get(0).life==0 || (!myTank.alive && !fTank.alive))
+						flag = -1;
+					else if (enemies.size()==0)
+						flag = 1;
+					if (flag!=0)
+					{
+						start_pause(true);
+						JFrame df = new JFrame();
+						JOptionPane op = new JOptionPane();
+						if (flag==1)
+							op.showMessageDialog(df, "Your team win!");
+						else
+							op.showMessageDialog(df, "Your team lose!");
+					}
+
 					//{myTank, fTank, enemies, myBullets, enemyBullets, walls}
 					//myBullets and enemyTanks
 					for (int i=0; i<myBullets.size(); i++)
@@ -339,6 +396,7 @@ public class Game extends JPanel{
 								myTank.alive = false;
 								enemies.get(i).alive = false;
 								enemies.remove(i);
+								myPoint++;
 							}
 					if (fTank.alive)
 						for (int i=0; i<enemies.size(); i++)
@@ -347,6 +405,7 @@ public class Game extends JPanel{
 								fTank.alive = false;
 								enemies.get(i).alive = false;
 								enemies.remove(i);
+								fPoint++;
 							}
 
 					//myTank and fTank
@@ -360,7 +419,7 @@ public class Game extends JPanel{
 							fTank.colliding = temp;
 					}
 
-					//between enemmies
+					//between enemies
 					for (int i=0; i<enemies.size()-1; i++)
 						for (int j=i+1; j<enemies.size(); j++)
 						{
@@ -373,10 +432,10 @@ public class Game extends JPanel{
 								etj.colliding = temp;
 						}
 
-
-					Thread.sleep(delay);
+				}
+				Thread.sleep(delay);
 				} catch(Exception e){System.err.println("[E]\t"+e);}
-			}
+			
 		}	
 	}
 

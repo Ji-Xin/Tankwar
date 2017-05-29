@@ -31,7 +31,7 @@ public class EnemyTank extends Tank{
 				Random rand = new Random();
 				while (alive)
 				{
-					if (auto)
+					if (auto && !parent.paused)
 					{
 						dir = rand.nextInt(4);
 						synchronized(parentEnemyTank.parent.sender)
@@ -44,7 +44,7 @@ public class EnemyTank extends Tank{
 
 
 					Thread.sleep(500);
-					if (auto)
+					if (auto && !parent.paused)
 						fire();
 					Thread.sleep(500);
 				}

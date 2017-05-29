@@ -22,7 +22,6 @@ public class Client extends Game{
 		myTank = new Tank(100, 400, 1, this);
 
 
-		frame.setVisible(true);
 
 		String sIP = "127.0.0.1";
 		me = new Socket(sIP, Server.serverPort);
@@ -57,6 +56,8 @@ public class Client extends Game{
 		ch.start();
 		hi.start();
 		mo.start();
+
+		frame.setVisible(true);
 	}
 
 
@@ -66,37 +67,4 @@ public class Client extends Game{
 
 
 
-
-	/*public class Chat extends Thread{
-		public void run(){
-			while (true)
-			{
-				try{
-					if (hitting==true)
-						wait();
-
-
-					//1.1 myTank new information: {dir,moving}
-					fTank.dir = Integer.parseInt(receiver.readLine());
-					fTank.moving = Boolean.parseBoolean(receiver.readLine());
-					sender.writeBytes(myTank.dir+"\n");
-					sender.writeBytes(myTank.moving+"\n");
-
-
-					//1.2 myBullet generation (only generate, no need to communicate after generated)
-					
-					
-
-
-					//2.1 new dir of enemyTanks (client do the enemyBullet generation itself)
-					for (int i=0; i<enemies.size(); i++)
-						enemies.get(i).dir = Integer.parseInt(receiver.readLine());
-
-					hitting = true;
-					notify();
-					Thread.sleep(delay);
-				} catch(Exception e){}
-			}
-		}
-	}*/
 }
