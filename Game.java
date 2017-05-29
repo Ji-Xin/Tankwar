@@ -46,9 +46,9 @@ public class Game extends JPanel{
 		myPoint = 0;
 		fPoint = 0;
 
+		walls.add(new Wall(150, 550, this, true));
 		for (int i=0; i<10; i++)
 			walls.add(new Wall(150+30*i, 500, this, false));
-		walls.add(new Wall(150, 550, this, true));
 
 		hi = new Hit();
 		mo = new Motion();
@@ -139,18 +139,12 @@ public class Game extends JPanel{
 						for (int i=0; i<e_count; i++)
 							enemies.get(i).auto_thread.start();
 
-						// returns myTank of client
-						/*synchronized(sender)
-						{
-							sender.writeBytes(myTank.x+","+myTank.y+","+myTank.dir+"\n");
-						}*/
-
 						}
 					}
 
 
 				}
-			} catch(Exception ex){ex.printStackTrace();}
+			} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 		}
 	}
 
@@ -161,6 +155,7 @@ public class Game extends JPanel{
 		g.setFont(new Font("Sans", Font.BOLD, 16));
 		g.drawString("My points: "+myPoint, width+extra_width/4, 50);
 		g.drawString("Friend points: "+fPoint, width+extra_width/6, 70);
+		g.drawString("Base HP: "+walls.get(0).life, width+extra_width/4, 90);
 	}
 
 
@@ -211,7 +206,7 @@ public class Game extends JPanel{
 
 			info(g);
 
-		} catch(Exception e) {System.err.println("[E]\t"+e);}
+		} catch(Exception ex) {}
 	}
 
 	public class Motion extends Thread{
@@ -219,7 +214,7 @@ public class Game extends JPanel{
 			while (true)
 			{
 				repaint();
-				try{Thread.sleep(delay);}catch(Exception e){System.err.println("[E]\t"+e);}
+				try{Thread.sleep(delay);}catch(Exception ex){ex.printStackTrace();System.exit(0);}
 			}
 		}
 	}
@@ -278,8 +273,15 @@ public class Game extends JPanel{
 					//enemyBullets and walls
 					for (int j=0; j<walls.size(); j++)
 						for (int i=0; i<enemyBullets.size(); i++)
-							if (collide(enemyBullets.get(i), walls.get(j)))
+						{
+							Wall temp = walls.get(j);
+							if (collide(enemyBullets.get(i), temp))
+							{
 								enemyBullets.remove(i);
+								if (temp.base)
+									temp.life--;
+							}
+						}
 
 					//{myTank, fTank} and walls
 					//the following block: check if myTank is blocked from a certain direction

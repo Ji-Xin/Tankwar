@@ -11,12 +11,15 @@ public class Wall{
 	Color br1 = new Color(204, 102, 0);
 	Color br2 = new Color(170, 51, 17);
 	boolean base;
+	int life;
 
 	public Wall(int xx, int yy, Game p, boolean b){
 		x = xx;
 		y = yy;
 		parent = p;
 		base = b;
+		if (b)
+			life = 2;
 	}
 
 	public void draw(Graphics g){
@@ -26,8 +29,11 @@ public class Wall{
 			g.fillRect(x, y, Tank.size, Tank.size);
 			g.setColor(Color.cyan);
 			g.fillOval(x, y, Tank.size, Tank.size);
-			g.setColor(new Color(225, 0, 160));
-			g.fillRect(x+Tank.size/4, y+Tank.size/4, Tank.size/2+2, Tank.size/2+2);
+			if (life==2)
+			{
+				g.setColor(new Color(225, 0, 160));
+				g.fillRect(x+Tank.size/4, y+Tank.size/4, Tank.size/2+2, Tank.size/2+2);
+			}
 		}
 		else
 		{
