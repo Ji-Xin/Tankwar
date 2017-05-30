@@ -153,6 +153,7 @@ public class Game extends JPanel{
 								etemp.x = Integer.parseInt(arrt[0]);
 								etemp.y = Integer.parseInt(arrt[1]);
 								etemp.dir = Integer.parseInt(arrt[2]);
+								etemp.health = Integer.parseInt(arrt[3]);
 							}
 						}
 						else
@@ -162,9 +163,11 @@ public class Game extends JPanel{
 							{
 								String st = receiver.readLine();
 								String [] arrt = st.split(",");
-								enemies.add(new EnemyTank(Integer.parseInt(arrt[0]),
+								EnemyTank etemp = new EnemyTank(Integer.parseInt(arrt[0]),
 									Integer.parseInt(arrt[1]), Integer.parseInt(arrt[2]),
-									parent, false));
+									parent, false, Boolean.parseBoolean(arrt[4]));
+								etemp.health = Integer.parseInt(arrt[3]);
+								enemies.add(etemp);
 							}
 						for (int i=0; i<e_count; i++)
 							enemies.get(i).auto_thread.start();
@@ -249,7 +252,6 @@ public class Game extends JPanel{
 		public void run(){
 			while (true)
 			{
-				//System.out.println(paused);
 				if (!paused)
 					repaint();
 				try{Thread.sleep(delay);}
@@ -306,13 +308,26 @@ public class Game extends JPanel{
 						for (int j=0; j<enemies.size(); j++)
 							if (collide(myBullets.get(i), enemies.get(j)))
 							{
-								if (myBullets.get(i).byMe)
-									myPoint++;
+								EnemyTank temp = enemies.get(j);
+								if (temp.health==1)
+								{
+									int point=1;
+									if (temp.strong)
+										point = 3;
+									if (myBullets.get(i).byMe)
+										myPoint += point;
+									else
+										fPoint += point;
+									temp.alive = false;
+									enemies.remove(j);
+									myBullets.remove(i);
+								}
 								else
-									fPoint++;
-								enemies.get(j).alive = false;
-								enemies.remove(j);
-								myBullets.remove(i);
+								{
+									temp.health--;
+									myBullets.remove(i);
+								}
+								break;
 							}
 
 					//enemyBullets and myTank
@@ -326,6 +341,7 @@ public class Game extends JPanel{
 							{
 								sender.writeBytes("$tankDead\n");
 							}
+							break;
 						}
 
 					//myBullets and walls

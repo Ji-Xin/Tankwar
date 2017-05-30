@@ -37,8 +37,12 @@ public class Server extends Game{
 
 		myTank = new Tank(100, 500, 1, this);
 
-		for (int i=0; i<1; i++)
-			enemies.add(new EnemyTank(500, 50+60*i, 0, this, true));
+		for (int i=0; i<4; i++)
+			enemies.add(new EnemyTank(500, 50+60*i, i%4, this, true, true));
+		for (int i=4; i<8; i++)
+			enemies.add(new EnemyTank(500, 50+60*i, i%4, this, true, false));
+
+
 
 		System.out.println("Server starts.");
 
@@ -69,6 +73,7 @@ public class Server extends Game{
 			sender.writeBytes(temp.x+"\n");
 			sender.writeBytes(temp.y+"\n");
 			sender.writeBytes(temp.dir+"\n");
+			sender.writeBytes(temp.strong+"\n");
 		}
 		for (int i=0; i<enemies.size(); i++)
 		{
@@ -107,7 +112,8 @@ public class Server extends Game{
 							for (int i=0; i<enemies.size(); i++)
 							{
 								EnemyTank temp = enemies.get(i);
-								sender.writeBytes(temp.x+","+temp.y+","+temp.dir+"\n");
+								sender.writeBytes(temp.x+","+temp.y+","+temp.dir+","+
+									temp.health+","+temp.strong+"\n");
 							}
 						}
 					

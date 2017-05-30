@@ -46,7 +46,8 @@ public class Client extends Game{
 			xx = Integer.parseInt(receiver.readLine());
 			yy = Integer.parseInt(receiver.readLine());
 			dd = Integer.parseInt(receiver.readLine());
-			EnemyTank temp = new EnemyTank(xx, yy, dd, this, false);
+			boolean st = Boolean.parseBoolean(receiver.readLine());
+			EnemyTank temp = new EnemyTank(xx, yy, dd, this, false, st);
 			enemies.add(temp);
 		}
 		for (int i=0; i<enemy_count; i++)

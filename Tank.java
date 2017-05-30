@@ -34,20 +34,13 @@ public class Tank{
 	}
 
 	public void draw(Graphics g){
-		if (mine)
-			g.setColor(army_green);
-		else
-			g.setColor(Color.red);
+		g.setColor(army_green);
 		g.fillRect(x, y, size, size);
 
-		if (mine)
-		{
-			g.setColor(dark_green);
-			if (friend)
-				g.setColor(Color.blue);
-		}
-		else
-			g.setColor(Color.orange);
+		g.setColor(dark_green);
+		if (friend)
+			g.setColor(Color.blue);
+
 		switch(dir)
 		{
 			case 0:				
