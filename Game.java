@@ -287,10 +287,17 @@ public class Game extends JPanel{
 						start_pause(true);
 						JFrame df = new JFrame();
 						JOptionPane op = new JOptionPane();
+						String message;
 						if (flag==1)
-							op.showMessageDialog(df, "Your team win!");
+							message = "Your team win!";
 						else
-							op.showMessageDialog(df, "Your team lose!");
+							message = "Your team lose!";
+						Object [] options = {"Exit"};
+						int sign = op.showOptionDialog(df, message+" Press the key to exit.",
+							"End Of Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+							null, options, options[0]);
+						if (sign==0)
+							System.exit(0);
 					}
 
 					//{myTank, fTank, enemies, myBullets, enemyBullets, walls}
