@@ -8,7 +8,7 @@ import java.lang.*;
 import java.net.*;
 import java.io.*;
 
-public class Game extends JPanel{
+public abstract class Game extends JPanel{
 	JFrame frame;
 	public static final int width=800, height=600, extra_width=200, extra_height=500;
 	public static final int delay=50;
@@ -26,6 +26,7 @@ public class Game extends JPanel{
 	JMenuBar bar;
 	JMenu menu;
 	JMenuItem item1, item2;
+	String history;
 
 
 	BufferedReader receiver;
@@ -37,6 +38,7 @@ public class Game extends JPanel{
 		bground = Color.black;
 
 		frame = new JFrame(title);
+		this.setSize(width, height);
 		frame.setContentPane(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
@@ -58,6 +60,7 @@ public class Game extends JPanel{
 		paused = true;
 		myPoint = 0;
 		fPoint = 0;
+		history = "";
 
 		walls.add(new Wall(150, 530, this, true));
 		for (int i=0; i<10; i++)
@@ -180,6 +183,16 @@ public class Game extends JPanel{
 						start_pause(false);
 					}
 
+					if (s.equals("$history"))
+					{
+						synchronized(history)
+						{
+							for (int i=0; i<5; i++)
+								history += receiver.readLine()+"\n";
+						}
+						System.out.println(history);
+					}
+
 
 				}
 			} catch(Exception ex){ex.printStackTrace();System.exit(0);}
@@ -219,10 +232,12 @@ public class Game extends JPanel{
 					enemyBullets.remove(b);
 			}
 
+
 			for (int i=0; i<walls.size(); i++)
 			{
 				Wall w = walls.get(i);
-				w.draw(g);
+				if ( (i==0 && w.life>0) || (i>0) )
+					w.draw(g);
 			}
 
 			for (int i=0; i<enemies.size(); i++)
@@ -286,6 +301,8 @@ public class Game extends JPanel{
 						flag = 1;
 					if (flag!=0)
 					{
+						while (!isServer && history.length()==0)
+							Thread.sleep(delay);
 						start_pause(true);
 						JFrame df = new JFrame();
 						JOptionPane op = new JOptionPane();
@@ -295,8 +312,15 @@ public class Game extends JPanel{
 						else
 							message = "Your team lose!";
 						Object [] options = {"Exit"};
-						int sign = op.showOptionDialog(df, message+" Press the key to exit.",
-							"End Of Game", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE,
+
+						//count score
+						if (isServer)
+							record();
+
+
+						int sign = op.showOptionDialog(df, "History High"+"\n"+history+
+							"Press the key to exit.",
+							message+isServer, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 							null, options, options[0]);
 						if (sign==0)
 							System.exit(0);
@@ -304,8 +328,8 @@ public class Game extends JPanel{
 
 					//{myTank, fTank, enemies, myBullets, enemyBullets, walls}
 					//myBullets and enemyTanks
-					for (int i=0; i<myBullets.size(); i++)
-						for (int j=0; j<enemies.size(); j++)
+					for (int j=0; j<enemies.size(); j++)
+						for (int i=0; i<myBullets.size(); i++)
 							if (collide(myBullets.get(i), enemies.get(j)))
 							{
 								EnemyTank temp = enemies.get(j);
@@ -418,8 +442,11 @@ public class Game extends JPanel{
 							{
 								myTank.alive = false;
 								enemies.get(i).alive = false;
+								int temp = 1;
+								if (enemies.get(i).strong)
+									temp = 3;
+								myPoint += temp;
 								enemies.remove(i);
-								myPoint++;
 							}
 					if (fTank.alive)
 						for (int i=0; i<enemies.size(); i++)
@@ -427,8 +454,11 @@ public class Game extends JPanel{
 							{
 								fTank.alive = false;
 								enemies.get(i).alive = false;
+								int temp = 1;
+								if (enemies.get(i).strong)
+									temp = 3;
+								fPoint += temp;
 								enemies.remove(i);
-								fPoint++;
 							}
 
 					//myTank and fTank
@@ -499,4 +529,6 @@ public class Game extends JPanel{
 			return t.dir;
 		return -1;
 	}
+
+	public abstract void record();
 }

@@ -66,6 +66,6 @@ public class Client extends Game{
 		Client c = new Client();
 	}
 
-
+	public void record(){}
 
 }

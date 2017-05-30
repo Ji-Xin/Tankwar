@@ -28,12 +28,22 @@ public class Server extends Game{
 	static final int serverPort = 2288;
 	Sync sy;
 
+	TreeMap<String, Integer> users;
 
 	public Server() throws Exception{
 		super("Tank War Server");
 		isServer = true;
 		frame.setSize(width+extra_width, height);
 		frame.setLocation(30, 50);
+
+		users = new TreeMap<String, Integer>();
+		Scanner scan = new Scanner(new File("game/users.txt"));
+		while (scan.hasNext())
+		{
+			String user = scan.next();
+			int score = scan.nextInt();
+			users.put(user, score);
+		}
 
 		myTank = new Tank(100, 500, 1, this);
 
@@ -120,5 +130,54 @@ public class Server extends Game{
 					Thread.sleep(2000);
 				} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 		}
+	}
+
+	private void add(String u, int s){
+		int temp = 0;
+		if (users.containsKey(u))
+		{
+			temp = users.get(u);
+			users.remove(u);
+		}
+		users.put(u, s+temp);
+	}
+
+	public void record(){
+		add("Server", myPoint);
+		add("Client", fPoint);
+
+		NavigableSet<Map.Entry<String, Integer>> set = 
+			new TreeSet<Map.Entry<String, Integer>>(
+			new Comparator<Map.Entry<String, Integer>>(){
+				public int compare(Map.Entry<String, Integer> e1, Map.Entry<String, Integer> e2){
+					return -(e1.getValue().compareTo(e2.getValue()));
+				}
+			}
+		);
+
+		set.addAll(users.entrySet());
+
+		try{
+			File fout = new File("game/users.txt");
+			PrintStream out = new PrintStream(fout);
+			Iterator<Map.Entry<String, Integer>> iter = set.iterator();
+			int count = 0;
+			while (iter.hasNext())
+			{
+				Map.Entry<String, Integer> temp = iter.next();
+				out.println(temp.getKey());
+				out.println(temp.getValue());
+				if (count<5)
+				{
+					history += "No."+(count+1)+"  "+temp.getKey()+"  "+temp.getValue()+"\n";
+					count++;
+				}
+			}
+			synchronized(sender)
+			{
+				sender.writeBytes("$history\n");
+				sender.writeBytes(history);
+			}
+		} catch(Exception ex){System.err.println(ex);}
 	}
 }
