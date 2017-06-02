@@ -92,7 +92,7 @@ public class Tank{
 					parent.sender.writeBytes(dir+"\n");
 				}
 			}
-		} catch(Exception ex){System.err.println("[E]\t"+ex);}
+		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 	}
 
 	public void fire(){
@@ -136,7 +136,7 @@ public class Tank{
 					try{
 						parent.sender.writeBytes("$fire\n");
 						parent.sender.writeBytes(bul.x+","+bul.y+","+bul.dir+","+bul.mine+"\n");
-					} catch(Exception ex){System.err.println("[E]\t"+ex);}
+					} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 				}
 			(new FireWait()).start();
 		}
@@ -145,7 +145,7 @@ public class Tank{
 	private class FireWait extends Thread{
 		public void run(){
 			fire_ready = false;
-			try{Thread.sleep(700);}catch(Exception e){System.err.println("[E]\t"+e);}
+			try{Thread.sleep(700);}catch(Exception ex){ex.printStackTrace();System.exit(0);}
 			fire_ready = true;
 		}
 	}
@@ -159,7 +159,7 @@ public class Tank{
 					parent.sender.writeBytes("$myTankStop\n");
 					//moving = false;
 				}
-		} catch(Exception ex){System.err.println("[E]\t"+ex);}
+		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 	}
 
 	public void move(){

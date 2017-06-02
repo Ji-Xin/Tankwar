@@ -10,7 +10,7 @@ import java.io.*;
 
 public abstract class Game extends JPanel{
 	JFrame frame;
-	public static final int width=800, height=600, extra_width=200, extra_height=500;
+	public static final int width=800, height=600, extra_width=200;
 	public static final int delay=50;
 	Color bground;
 	Tank myTank, fTank; //friendTank
@@ -27,6 +27,7 @@ public abstract class Game extends JPanel{
 	JMenu menu;
 	JMenuItem item1, item2;
 	String history;
+	String myName, fName;
 
 
 	BufferedReader receiver;
@@ -36,9 +37,8 @@ public abstract class Game extends JPanel{
 
 	public Game(String title){
 		bground = Color.black;
-
 		frame = new JFrame(title);
-		this.setSize(width, height);
+		frame.setSize(width+extra_width, height+23);
 		frame.setContentPane(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
@@ -70,6 +70,27 @@ public abstract class Game extends JPanel{
 		mo = new Motion();
 		ch = new Chat(this);
 
+
+
+		JFrame df = new JFrame();
+		JOptionPane op = new JOptionPane();
+		String instruction = 
+		"1. Press direction keys to move, space key to fire.\n" +
+		"2. Your tank and normal enemy tank will be destroyed at one shot, but special enemy\n" +
+		"Tank will be destroyed after two shots. Kill a normal enemy to earn one point, special\n" +
+		"special one to earn three.\n" +
+		"3. If your tank and your friend's tank are all dead, or the base is destroyed, your team loses;\n" +
+		"4. If all enemy tanks are dead, your team wins;";
+		myName = op.showInputDialog(df,
+			"Please input your username\n\nInstructions:\n"+instruction,
+			"Game start",
+			JOptionPane.QUESTION_MESSAGE);
+		if (myName==null)
+			System.exit(0);
+		else
+		{
+			paused = false;
+		}
 	}
 
 	public class SPListener implements ActionListener{
@@ -190,7 +211,11 @@ public abstract class Game extends JPanel{
 							for (int i=0; i<5; i++)
 								history += receiver.readLine()+"\n";
 						}
-						System.out.println(history);
+					}
+
+					if (s.equals("$name"))
+					{
+						fName = receiver.readLine();
 					}
 
 
@@ -201,7 +226,7 @@ public abstract class Game extends JPanel{
 
 	public void info(Graphics g){
 		g.setColor(Color.white);
-		g.fillRect(width, 0, extra_width, extra_height);
+		g.fillRect(width, 0, extra_width, height);
 		g.setColor(Color.black);
 		g.setFont(new Font("Sans", Font.BOLD, 16));
 		g.drawString("My points: "+myPoint, width+extra_width/4, 50);
@@ -308,9 +333,9 @@ public abstract class Game extends JPanel{
 						JOptionPane op = new JOptionPane();
 						String message;
 						if (flag==1)
-							message = "Your team win!";
+							message = "Your team wins!";
 						else
-							message = "Your team lose!";
+							message = "Your team loses!";
 						Object [] options = {"Exit"};
 
 						//count score
@@ -318,9 +343,9 @@ public abstract class Game extends JPanel{
 							record();
 
 
-						int sign = op.showOptionDialog(df, "History High"+"\n"+history+
+						int sign = op.showOptionDialog(df, "History High:"+"\n"+history+
 							"Press the key to exit.",
-							message+isServer, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+							message, JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 							null, options, options[0]);
 						if (sign==0)
 							System.exit(0);
@@ -487,7 +512,7 @@ public abstract class Game extends JPanel{
 
 				}
 				Thread.sleep(delay);
-				} catch(Exception e){System.err.println("[E]\t"+e);}
+				} catch(Exception ex){/*ex.printStackTrace();System.exit(0);do NOT exit here*/}
 			
 		}	
 	}

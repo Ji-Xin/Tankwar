@@ -16,7 +16,6 @@ public class Client extends Game{
 		super("Tank War Client");
 		isServer = false;
 
-		frame.setSize(width+extra_width, height);
 		frame.setLocation(1200, 50);
 
 		myTank = new Tank(100, 400, 1, this);
@@ -58,6 +57,11 @@ public class Client extends Game{
 		hi.start();
 		mo.start();
 
+		synchronized(sender)
+		{
+			sender.writeBytes("$name\n");
+			sender.writeBytes(myName+"\n");
+		}
 		frame.setVisible(true);
 	}
 

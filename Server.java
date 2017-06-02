@@ -33,7 +33,6 @@ public class Server extends Game{
 	public Server() throws Exception{
 		super("Tank War Server");
 		isServer = true;
-		frame.setSize(width+extra_width, height);
 		frame.setLocation(30, 50);
 
 		users = new TreeMap<String, Integer>();
@@ -126,13 +125,12 @@ public class Server extends Game{
 									temp.health+","+temp.strong+"\n");
 							}
 						}
-					
 					Thread.sleep(2000);
 				} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 		}
 	}
 
-	private void add(String u, int s){
+	private void modify(String u, int s){
 		int temp = 0;
 		if (users.containsKey(u))
 		{
@@ -143,8 +141,8 @@ public class Server extends Game{
 	}
 
 	public void record(){
-		add("Server", myPoint);
-		add("Client", fPoint);
+		modify(myName, myPoint);
+		modify(fName, fPoint);
 
 		NavigableSet<Map.Entry<String, Integer>> set = 
 			new TreeSet<Map.Entry<String, Integer>>(
@@ -178,6 +176,6 @@ public class Server extends Game{
 				sender.writeBytes("$history\n");
 				sender.writeBytes(history);
 			}
-		} catch(Exception ex){System.err.println(ex);}
+		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 	}
 }
