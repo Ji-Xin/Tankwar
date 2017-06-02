@@ -35,6 +35,18 @@ public abstract class Game extends JPanel{
 	Chat ch;
 
 
+	private class Monitor extends Thread{
+		public void run(){
+			try{
+				while (true)
+				{
+					System.out.println(frame.getHeight());
+					Thread.sleep(1000);
+				}
+			} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+		}
+	}
+
 	public Game(String title){
 		bground = Color.black;
 		frame = new JFrame(title);
@@ -43,6 +55,8 @@ public abstract class Game extends JPanel{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 
+
+		//(new Monitor()).start();
 		frame.addKeyListener(new Listener());
 
 		bar = new JMenuBar();
@@ -62,7 +76,8 @@ public abstract class Game extends JPanel{
 		fPoint = 0;
 		history = "";
 
-		walls.add(new Wall(150, 530, this, true));
+		walls.add(new Wall(350, 500, this, true));
+		//here
 		for (int i=0; i<10; i++)
 			walls.add(new Wall(150+30*i, 500, this, false));
 
@@ -74,13 +89,15 @@ public abstract class Game extends JPanel{
 
 		JFrame df = new JFrame();
 		JOptionPane op = new JOptionPane();
+
 		String instruction = 
-		"1. Press direction keys to move, space key to fire.\n" +
-		"2. Your tank and normal enemy tank will be destroyed at one shot, but special enemy\n" +
-		"Tank will be destroyed after two shots. Kill a normal enemy to earn one point, special\n" +
-		"special one to earn three.\n" +
-		"3. If your tank and your friend's tank are all dead, or the base is destroyed, your team loses;\n" +
-		"4. If all enemy tanks are dead, your team wins;";
+"1. Press direction keys to move, space key to fire.\n" +
+"2. Your tank and normal enemy tank will be destroyed at one shot, but special enemy\n" +
+"Tank will be destroyed after two shots. Kill a normal enemy to earn one point, special\n" +
+"special one to earn three.\n" +
+"3. If your tank and your friend's tank are all dead, or the base is destroyed, your team loses;\n"+
+"4. If all enemy tanks are dead, your team wins;";
+
 		myName = op.showInputDialog(df,
 			"Please input your username\n\nInstructions:\n"+instruction,
 			"Game start",

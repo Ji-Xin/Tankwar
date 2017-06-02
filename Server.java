@@ -46,10 +46,10 @@ public class Server extends Game{
 
 		myTank = new Tank(100, 500, 1, this);
 
-		for (int i=0; i<4; i++)
+		/*for (int i=0; i<4; i++)
 			enemies.add(new EnemyTank(500, 50+60*i, i%4, this, true, true));
 		for (int i=4; i<8; i++)
-			enemies.add(new EnemyTank(500, 50+60*i, i%4, this, true, false));
+			enemies.add(new EnemyTank(500, 50+60*i, i%4, this, true, false));*/
 
 
 

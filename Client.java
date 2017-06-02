@@ -22,7 +22,7 @@ public class Client extends Game{
 
 
 
-		String sIP = "127.0.0.1";
+		String sIP = "10.129.161.8";
 		me = new Socket(sIP, Server.serverPort);
 		sender = new DataOutputStream(me.getOutputStream());
 		receiver = new BufferedReader(new InputStreamReader(me.getInputStream()));
