@@ -44,12 +44,19 @@ public class Server extends Game{
 			users.put(user, score);
 		}
 
-		myTank = new Tank(100, 500, 1, this);
+		int interval = (width-6*Tank.size)/7;
 
-		/*for (int i=0; i<4; i++)
-			enemies.add(new EnemyTank(500, 50+60*i, i%4, this, true, true));
-		for (int i=4; i<8; i++)
-			enemies.add(new EnemyTank(500, 50+60*i, i%4, this, true, false));*/
+		myTank = new Tank(2*interval+Tank.size, 530, 1, this);
+		
+		for (int i=0; i<3; i++)
+		{
+			enemies.add(new EnemyTank(i*(interval+Tank.size)+interval, i*30+10,
+				2, this, true, true));
+			enemies.add(new EnemyTank((i+3)*(interval+Tank.size)+interval, (2-i)*30+10,
+				2, this, true, false));
+		}
+		for (int i=0; i<enemies.size(); i++)
+			System.out.println(enemies.get(i).x+"\t"+enemies.get(i).y);
 
 
 
@@ -94,8 +101,6 @@ public class Server extends Game{
 		mo.start();
 		sy = new Sync();
 		sy.start();
-
-		frame.setVisible(true);
 	}
 	
 

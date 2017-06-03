@@ -7,6 +7,7 @@ import java.util.*;
 import java.lang.*;
 import java.net.*;
 import java.io.*;
+import javax.imageio.*;
 
 public abstract class Game extends JPanel{
 	JFrame frame;
@@ -28,26 +29,15 @@ public abstract class Game extends JPanel{
 	JMenuItem item1, item2;
 	String history;
 	String myName, fName;
+	static Image wall_image;
 
 
 	BufferedReader receiver;
 	DataOutputStream sender;
 	Chat ch;
 
-
-	private class Monitor extends Thread{
-		public void run(){
-			try{
-				while (true)
-				{
-					System.out.println(frame.getHeight());
-					Thread.sleep(1000);
-				}
-			} catch(Exception ex){ex.printStackTrace();System.exit(0);}
-		}
-	}
-
-	public Game(String title){
+	public Game(String title) throws Exception{
+		wall_image = ImageIO.read(new File("game/Wall.jpg"));
 		bground = Color.black;
 		frame = new JFrame(title);
 		frame.setSize(width+extra_width, height+23);
@@ -56,7 +46,6 @@ public abstract class Game extends JPanel{
 		frame.setResizable(false);
 
 
-		//(new Monitor()).start();
 		frame.addKeyListener(new Listener());
 
 		bar = new JMenuBar();
@@ -76,15 +65,14 @@ public abstract class Game extends JPanel{
 		fPoint = 0;
 		history = "";
 
-		walls.add(new Wall(350, 500, this, true));
-		//here
-		for (int i=0; i<10; i++)
-			walls.add(new Wall(150+30*i, 500, this, false));
+		draw_map();
 
 		hi = new Hit();
 		mo = new Motion();
 		ch = new Chat(this);
 
+
+		frame.setVisible(true);
 
 
 		JFrame df = new JFrame();
@@ -108,6 +96,22 @@ public abstract class Game extends JPanel{
 		{
 			paused = false;
 		}
+	}
+
+	private void add_edge(int x, int interval){
+		for (int i=0; i<4; i++)
+		{
+			walls.add(new Wall(x, height/2-interval/2-Tank.size-Tank.size*i, this, false));
+			walls.add(new Wall(x, height/2+interval/2+Tank.size*i, this, false));				
+		}
+	}
+
+	private void draw_map(){		
+		walls.add(new Wall(width/2-Tank.size/2, 500, this, true));//base
+
+		int interval = (width-6*Tank.size)/7;
+		for (int i=0; i<6; i++)
+			add_edge(i*(interval+Tank.size)+interval, (int)(50+Math.abs(i-2.5)*70));
 	}
 
 	public class SPListener implements ActionListener{

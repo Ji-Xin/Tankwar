@@ -18,7 +18,9 @@ public class Client extends Game{
 
 		frame.setLocation(1200, 50);
 
-		myTank = new Tank(100, 400, 1, this);
+		int interval = (width-6*Tank.size)/7;
+
+		myTank = new Tank(5*interval+4*Tank.size, 530, 1, this);
 
 
 
@@ -62,7 +64,7 @@ public class Client extends Game{
 			sender.writeBytes("$name\n");
 			sender.writeBytes(myName+"\n");
 		}
-		frame.setVisible(true);
+		//frame.setVisible(true);
 	}
 
 

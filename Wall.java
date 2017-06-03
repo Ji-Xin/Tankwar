@@ -37,7 +37,7 @@ public class Wall{
 		}
 		else
 		{
-			g.setColor(br1);
+			/*g.setColor(br1);
 			g.fillRect(x, y, Tank.size/2, Tank.size/3);
 			g.fillRect(x+Tank.size/4, y+Tank.size/3, Tank.size/2, Tank.size/3);
 			g.fillRect(x, y+2*Tank.size/3, Tank.size/2, Tank.size/3);
@@ -46,7 +46,8 @@ public class Wall{
 			g.fillRect(x+Tank.size/2, y, Tank.size/2, Tank.size/3);
 			g.fillRect(x+Tank.size/2, y+2*Tank.size/3, Tank.size/2, Tank.size/3);
 			g.fillRect(x, y+Tank.size/3, Tank.size/4, Tank.size/3);
-			g.fillRect(x+3*Tank.size/4, y+Tank.size/3, Tank.size/4+1, Tank.size/3);
+			g.fillRect(x+3*Tank.size/4, y+Tank.size/3, Tank.size/4+1, Tank.size/3);*/
+			g.drawImage(Game.wall_image, x, y, Tank.size, Tank.size, null, null);
 		}
 	}
 }
