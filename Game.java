@@ -1,4 +1,4 @@
-package game;
+package code;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -8,6 +8,7 @@ import java.lang.*;
 import java.net.*;
 import java.io.*;
 import javax.imageio.*;
+import javax.sound.sampled.*;
 
 public abstract class Game extends JPanel{
 	JFrame frame;
@@ -30,6 +31,8 @@ public abstract class Game extends JPanel{
 	String history;
 	String myName, fName;
 	static Image wall_image;
+	static File explode_sound;
+	Clip clip;
 
 
 	BufferedReader receiver;
@@ -37,7 +40,8 @@ public abstract class Game extends JPanel{
 	Chat ch;
 
 	public Game(String title) throws Exception{
-		wall_image = ImageIO.read(new File("game/Wall.jpg"));
+		wall_image = ImageIO.read(new File("code/source/Wall.jpg"));
+		explode_sound = new File("code/source/Explode.wav");
 		bground = Color.black;
 		frame = new JFrame(title);
 		frame.setSize(width+extra_width, height+23);
@@ -73,6 +77,12 @@ public abstract class Game extends JPanel{
 
 
 		frame.setVisible(true);
+
+		File bgm = new File("code/source/Background.wav");
+		AudioInputStream audioIn = AudioSystem.getAudioInputStream(bgm);
+		DataLine.Info info = new DataLine.Info(Clip.class, audioIn.getFormat());
+		clip = (Clip)AudioSystem.getLine(info);
+		clip.open(audioIn);
 
 
 		JFrame df = new JFrame();
@@ -347,6 +357,7 @@ public abstract class Game extends JPanel{
 						flag = 1;
 					if (flag!=0)
 					{
+						clip.stop();
 						while (!isServer && history.length()==0)
 							Thread.sleep(delay);
 						start_pause(true);
@@ -391,6 +402,14 @@ public abstract class Game extends JPanel{
 									temp.alive = false;
 									enemies.remove(j);
 									myBullets.remove(i);
+
+									AudioInputStream audioIn = 
+										AudioSystem.getAudioInputStream(explode_sound);
+									DataLine.Info info = 
+										new DataLine.Info(Clip.class, audioIn.getFormat());
+									Clip clip = (Clip)AudioSystem.getLine(info);
+									clip.open(audioIn);
+									clip.start();
 								}
 								else
 								{
@@ -411,6 +430,15 @@ public abstract class Game extends JPanel{
 							{
 								sender.writeBytes("$tankDead\n");
 							}
+
+							AudioInputStream audioIn = 
+								AudioSystem.getAudioInputStream(explode_sound);
+							DataLine.Info info = 
+								new DataLine.Info(Clip.class, audioIn.getFormat());
+							Clip clip = (Clip)AudioSystem.getLine(info);
+							clip.open(audioIn);
+							clip.start();
+
 							break;
 						}
 

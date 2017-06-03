@@ -1,4 +1,4 @@
-package game;
+package code;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -36,7 +36,7 @@ public class Server extends Game{
 		frame.setLocation(30, 50);
 
 		users = new TreeMap<String, Integer>();
-		Scanner scan = new Scanner(new File("game/users.txt"));
+		Scanner scan = new Scanner(new File("code/source/users.txt"));
 		while (scan.hasNext())
 		{
 			String user = scan.next();
@@ -55,8 +55,6 @@ public class Server extends Game{
 			enemies.add(new EnemyTank((i+3)*(interval+Tank.size)+interval, (2-i)*30+10,
 				2, this, true, false));
 		}
-		for (int i=0; i<enemies.size(); i++)
-			System.out.println(enemies.get(i).x+"\t"+enemies.get(i).y);
 
 
 
@@ -99,6 +97,7 @@ public class Server extends Game{
 		ch.start();
 		hi.start();
 		mo.start();
+		clip.start();
 		sy = new Sync();
 		sy.start();
 	}
@@ -161,7 +160,7 @@ public class Server extends Game{
 		set.addAll(users.entrySet());
 
 		try{
-			File fout = new File("game/users.txt");
+			File fout = new File("code/source/users.txt");
 			PrintStream out = new PrintStream(fout);
 			Iterator<Map.Entry<String, Integer>> iter = set.iterator();
 			int count = 0;

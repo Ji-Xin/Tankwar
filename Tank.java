@@ -1,9 +1,11 @@
-package game;
+package code;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
+import javax.sound.sampled.*;
+import java.io.*;
 
 public class Tank{
 	int x,y; //position
@@ -19,8 +21,10 @@ public class Tank{
 	int colliding; // which directions is blocked, -1 for not blocked
 	Game parent;
 	boolean fire_ready;
+	static File fire_sound;
 
 	public Tank(int xx, int yy, int d, Game p){
+		fire_sound = new File("code/source/Shot.wav");
 		friend = false;
 		mine = true;
 		x = xx;
@@ -95,7 +99,7 @@ public class Tank{
 		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
 	}
 
-	public void fire(){
+	public void fire() throws Exception{
 		if (fire_ready)
 		{
 			Bullet bul=null;
@@ -127,7 +131,15 @@ public class Tank{
 					break;
 			}
 			if (mine)
+			{
+				AudioInputStream audioIn = AudioSystem.getAudioInputStream(fire_sound);
+				DataLine.Info info = new DataLine.Info(Clip.class, audioIn.getFormat());
+				Clip clip = (Clip)AudioSystem.getLine(info);
+				clip.open(audioIn);
+				clip.start();
+
 				parent.myBullets.add(bul);
+			}
 			else
 				parent.enemyBullets.add(bul);
 			if (parent.isServer || mine)
