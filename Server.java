@@ -27,16 +27,21 @@ public class Server extends Game{
 	ServerSocket server;
 	static final int serverPort = 2288;
 	Sync sy;
+	String directory;
 
 	TreeMap<String, Integer> users;
 
 	public Server() throws Exception{
 		super("Tank War Server");
+
+
 		isServer = true;
 		frame.setLocation(30, 50);
 
+		directory = (new File(System.getProperty("java.class.path"))).getParentFile().getAbsolutePath();
+
 		users = new TreeMap<String, Integer>();
-		Scanner scan = new Scanner(new File("code/source/users.txt"));
+		Scanner scan = new Scanner(new File(directory+"/code/source/users.txt"));
 		while (scan.hasNext())
 		{
 			String user = scan.next();
@@ -130,7 +135,7 @@ public class Server extends Game{
 							}
 						}
 					Thread.sleep(2000);
-				} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+				} catch(Exception ex){dealWithException(ex);}
 		}
 	}
 
@@ -160,7 +165,7 @@ public class Server extends Game{
 		set.addAll(users.entrySet());
 
 		try{
-			File fout = new File("code/source/users.txt");
+			File fout = new File(directory+"/code/source/users.txt");
 			PrintStream out = new PrintStream(fout);
 			Iterator<Map.Entry<String, Integer>> iter = set.iterator();
 			int count = 0;
@@ -180,6 +185,6 @@ public class Server extends Game{
 				sender.writeBytes("$history\n");
 				sender.writeBytes(history);
 			}
-		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+		} catch(Exception ex){dealWithException(ex);}
 	}
 }

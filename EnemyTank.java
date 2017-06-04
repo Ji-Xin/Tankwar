@@ -86,7 +86,7 @@ public class EnemyTank extends Tank{
 						fire();
 					Thread.sleep(500);
 				}
-			} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+			} catch(Exception ex){Game.dealWithException(ex);}
 		}
 	}
 }

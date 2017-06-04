@@ -48,6 +48,7 @@ public class Wall{
 			g.fillRect(x, y+Tank.size/3, Tank.size/4, Tank.size/3);
 			g.fillRect(x+3*Tank.size/4, y+Tank.size/3, Tank.size/4+1, Tank.size/3);*/
 			g.drawImage(Game.wall_image, x, y, Tank.size, Tank.size, null, null);
+			//Game.wall_image.paintIcon(parent, g, x, y);
 		}
 	}
 }

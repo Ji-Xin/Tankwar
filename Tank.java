@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.util.*;
 import javax.sound.sampled.*;
 import java.io.*;
+import java.net.*;
 
 public class Tank{
 	int x,y; //position
@@ -21,10 +22,10 @@ public class Tank{
 	int colliding; // which directions is blocked, -1 for not blocked
 	Game parent;
 	boolean fire_ready;
-	static File fire_sound;
+	static URL fire_sound;
 
 	public Tank(int xx, int yy, int d, Game p){
-		fire_sound = new File("code/source/Shot.wav");
+		fire_sound = getClass().getResource("/code/source/Shot.wav");
 		friend = false;
 		mine = true;
 		x = xx;
@@ -96,7 +97,7 @@ public class Tank{
 					parent.sender.writeBytes(dir+"\n");
 				}
 			}
-		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+		} catch(Exception ex){Game.dealWithException(ex);}
 	}
 
 	public void fire() throws Exception{
@@ -148,7 +149,7 @@ public class Tank{
 					try{
 						parent.sender.writeBytes("$fire\n");
 						parent.sender.writeBytes(bul.x+","+bul.y+","+bul.dir+","+bul.mine+"\n");
-					} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+					} catch(Exception ex){Game.dealWithException(ex);}
 				}
 			(new FireWait()).start();
 		}
@@ -157,7 +158,7 @@ public class Tank{
 	private class FireWait extends Thread{
 		public void run(){
 			fire_ready = false;
-			try{Thread.sleep(700);}catch(Exception ex){ex.printStackTrace();System.exit(0);}
+			try{Thread.sleep(700);}catch(Exception ex){Game.dealWithException(ex);}
 			fire_ready = true;
 		}
 	}
@@ -171,7 +172,7 @@ public class Tank{
 					parent.sender.writeBytes("$myTankStop\n");
 					//moving = false;
 				}
-		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+		} catch(Exception ex){Game.dealWithException(ex);}
 	}
 
 	public void move(){

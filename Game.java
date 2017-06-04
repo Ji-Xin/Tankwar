@@ -31,7 +31,7 @@ public abstract class Game extends JPanel{
 	String history;
 	String myName, fName;
 	static Image wall_image;
-	static File explode_sound;
+	static URL explode_sound;
 	Clip clip;
 
 
@@ -39,9 +39,19 @@ public abstract class Game extends JPanel{
 	DataOutputStream sender;
 	Chat ch;
 
+	public static void dealWithException(Exception ex){
+		ex.printStackTrace();
+	}
+
 	public Game(String title) throws Exception{
-		wall_image = ImageIO.read(new File("code/source/Wall.jpg"));
-		explode_sound = new File("code/source/Explode.wav");
+
+
+		wall_image = ImageIO.read(getClass().getResource("/code/source/Wall.jpg"));
+
+		explode_sound = getClass().getResource("/code/source/Explode.wav");
+
+
+
 		bground = Color.black;
 		frame = new JFrame(title);
 		frame.setSize(width+extra_width, height+23);
@@ -78,7 +88,7 @@ public abstract class Game extends JPanel{
 
 		frame.setVisible(true);
 
-		File bgm = new File("code/source/Background.wav");
+		URL bgm = getClass().getResource("/code/source/Background.wav");
 		AudioInputStream audioIn = AudioSystem.getAudioInputStream(bgm);
 		DataLine.Info info = new DataLine.Info(Clip.class, audioIn.getFormat());
 		clip = (Clip)AudioSystem.getLine(info);
@@ -138,7 +148,7 @@ public abstract class Game extends JPanel{
 				{
 					sender.writeBytes("$start_pause\n");
 				}
-		} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+		} catch(Exception ex){dealWithException(ex);}
 	}
 
 
@@ -251,7 +261,7 @@ public abstract class Game extends JPanel{
 
 
 				}
-			} catch(Exception ex){ex.printStackTrace();System.exit(0);}
+			} catch(Exception ex){dealWithException(ex);}
 		}
 	}
 
@@ -326,7 +336,7 @@ public abstract class Game extends JPanel{
 				if (!paused)
 					repaint();
 				try{Thread.sleep(delay);}
-						catch(Exception ex){ex.printStackTrace();System.exit(0);}
+						catch(Exception ex){dealWithException(ex);}
 			}
 		}
 	}
@@ -561,7 +571,7 @@ public abstract class Game extends JPanel{
 
 				}
 				Thread.sleep(delay);
-				} catch(Exception ex){/*ex.printStackTrace();System.exit(0);do NOT exit here*/}
+				} catch(Exception ex){}
 			
 		}	
 	}
