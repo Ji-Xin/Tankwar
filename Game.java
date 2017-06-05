@@ -31,8 +31,9 @@ public abstract class Game extends JPanel{
 	String history;
 	String myName, fName;
 	static Image wall_image;
-	static URL explode_sound;
+	static File explode_sound;
 	Clip clip;
+	String directory;
 
 
 	BufferedReader receiver;
@@ -45,10 +46,13 @@ public abstract class Game extends JPanel{
 
 	public Game(String title) throws Exception{
 
+		directory = new File(new File(System.getProperty("java.class.path")
+			).getAbsolutePath()).getParent();
 
-		wall_image = ImageIO.read(getClass().getResource("/code/source/Wall.jpg"));
 
-		explode_sound = getClass().getResource("/code/source/Explode.wav");
+		wall_image = ImageIO.read(new File(directory+"/code/source/Wall.jpg"));
+
+		explode_sound = new File(directory+"/code/source/Explode.wav");
 
 
 
@@ -88,7 +92,8 @@ public abstract class Game extends JPanel{
 
 		frame.setVisible(true);
 
-		URL bgm = getClass().getResource("/code/source/Background.wav");
+		//URL bgm = getClass().getResource("/code/source/Background.wav");
+		File bgm = new File(directory+"/code/source/Background.wav");
 		AudioInputStream audioIn = AudioSystem.getAudioInputStream(bgm);
 		DataLine.Info info = new DataLine.Info(Clip.class, audioIn.getFormat());
 		clip = (Clip)AudioSystem.getLine(info);

@@ -7,6 +7,7 @@ import java.util.*;
 import java.lang.*;
 import java.net.*;
 import java.io.*;
+import javax.sound.sampled.*;
 
 /*
 What to communicate?
@@ -27,7 +28,6 @@ public class Server extends Game{
 	ServerSocket server;
 	static final int serverPort = 2288;
 	Sync sy;
-	String directory;
 
 	TreeMap<String, Integer> users;
 
@@ -38,7 +38,6 @@ public class Server extends Game{
 		isServer = true;
 		frame.setLocation(30, 50);
 
-		directory = (new File(System.getProperty("java.class.path"))).getParentFile().getAbsolutePath();
 
 		users = new TreeMap<String, Integer>();
 		Scanner scan = new Scanner(new File(directory+"/code/source/users.txt"));
@@ -102,7 +101,8 @@ public class Server extends Game{
 		ch.start();
 		hi.start();
 		mo.start();
-		clip.start();
+		System.out.println(clip);
+		clip.loop(Clip.LOOP_CONTINUOUSLY);
 		sy = new Sync();
 		sy.start();
 	}

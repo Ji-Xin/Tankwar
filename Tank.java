@@ -22,17 +22,17 @@ public class Tank{
 	int colliding; // which directions is blocked, -1 for not blocked
 	Game parent;
 	boolean fire_ready;
-	static URL fire_sound;
+	static File fire_sound;
 
 	public Tank(int xx, int yy, int d, Game p){
-		fire_sound = getClass().getResource("/code/source/Shot.wav");
+		parent = p;
+		fire_sound = new File(parent.directory+"/code/source/Shot.wav");
 		friend = false;
 		mine = true;
 		x = xx;
 		y = yy;
 		dir = d;
 		first_collide = false;
-		parent = p;
 		alive = true;
 		fire_ready = true;
 		colliding = -1;
